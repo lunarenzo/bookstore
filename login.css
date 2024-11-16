@@ -1,0 +1,146 @@
+@import url('https://use.fontawesome.com/releases/v6.0.0/css/all.css');
+
+body {
+  height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  background: #212121;
+}
+
+.form {
+  width: 450px;
+  background-color: #ffffff;
+  color: black;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 30px;
+  border-radius: 20px;
+  font-family: sans-serif;
+}
+
+::placeholder {
+  font-family: sans-serif;
+}
+
+button {
+  align-self: flex-end;
+}
+
+.flex-column>label {
+  color: #151717;
+  font-weight: 600;
+}
+
+.form-input {
+  height: 50px;
+  border: 1.5px solid #ecedec;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  transition: 0.2s ease-in-out;
+}
+
+.fa-solid {
+  color: #757575;
+}
+
+.input {
+  margin-left: 10px;
+  border: none;
+  width: 85%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.form-input:focus-within {
+  border: 1.5px solid #2d79f3;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.flex-row>div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.flex-row>div>label {
+  font-size: 14px;
+  color: black;
+  font-weight: 400;
+}
+
+.flex-row>div>input {
+  margin:0;
+  height: 24px;
+}
+
+.span {
+  font-size: 14px;
+  margin-left: 5px;
+  color: #2d79f3;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button-submit {
+  background-color: #151717;
+  color: white;
+  width: 100%;
+  height: 50px;
+  border: none;
+  margin: 20px 0 10px 0;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.button-submit:hover {
+  background-color: #252727;
+}
+
+.p {
+  text-align: center;
+  color: black;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.btn {
+  width: 100%;
+  height: 50px;
+  background-color: white;
+  border: 1px solid #ededef;
+  margin-top: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.btn img {
+  width: 28px;
+}
+
+.btn:hover {
+  border: 1px solid #2d79f3;
+}
