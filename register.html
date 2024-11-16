@@ -1,50 +1,60 @@
-<link rel="stylesheet" href="register.css">
+<link rel="stylesheet" href="auth.css">
 <form class="form">
-    <div class="flex-column">
-      <label>Email</label>
-    </div>
-    <div class="form-input">
-      <i class="fa-solid fa-at"></i>
-      <input type="text" class="input" placeholder="Enter your Email">
-    </div>
-  
-    <div class="flex-column">
-      <label>Password</label>
-    </div>
-    <div class="form-input">
-      <i class="fa-solid fa-lock"></i>
-      <input type="password" class="input" placeholder="Enter your Password">
-      <i class="fa-solid fa-eye"></i>
-    </div>
-  
-    <div class="flex-column">
-      <label>Confirm Password</label>
-    </div>
-    <div class="form-input">
-      <i class="fa-solid fa-lock"></i>
-      <input type="password" class="input" placeholder="Confirm your Password">
-    </div>
-  
-    <div class="flex-row">
-      <div>
-        <input type="checkbox">
-        <label>Agree to terms and conditions</label>
-      </div>
-    </div>
-  
-    <button class="button-submit">Sign Up</button>
-    <p class="p">
-      Already have an account?
-      <a href="login.html">
+  <div class="flex-column">
+    <label>Full Name</label>
+  </div>
+  <div class="form-input">
+    <i class="fa-solid fa-user"></i>
+    <input type="text" class="input" placeholder="Enter your Full Name">
+  </div>
+
+  <div class="flex-column">
+    <label>Email</label>
+  </div>
+  <div class="form-input">
+    <i class="fa-solid fa-at"></i>
+    <input type="email" class="input" placeholder="Enter your Email">
+  </div>
+
+  <div class="flex-column">
+    <label>Password</label>
+  </div>
+  <div class="form-input">
+    <i class="fa-solid fa-lock"></i>
+    <input type="password" class="input" placeholder="Enter your Password">
+    <i class="fa-solid fa-eye"></i>
+  </div>
+
+  <div class="flex-column">
+    <label>Confirm Password</label>
+  </div>
+  <div class="form-input">
+    <i class="fa-solid fa-lock"></i>
+    <input type="password" class="input" placeholder="Confirm your Password">
+    <i class="fa-solid fa-eye"></i>
+  </div>
+
+  <div class="form-options">
+    <label class="checkbox-container">
+      <input type="checkbox">
+      <span class="checkmark"></span>
+      I agree to the Terms & Conditions
+    </label>
+  </div>
+
+  <button class="button-submit">Sign Up</button>
+  <p class="p">
+    Already have an account? 
+    <a href="login.html">
       <span class="span">Sign In</span>
-    </p>
-    <p class="p line">Or Sign Up With</p>
-  
-    <div class="flex-row">
-      <button class="btn google-btn">
-        <img src="https://codetheworld.io/wp-content/uploads/2024/04/google-icon.png" alt="Google Icon">
-        Google
-      </button>
-    </div>
-  </form>
-  
+    </a>
+  </p>
+  <p class="p line">Or With</p>
+
+  <div>
+    <button class="btn google-btn">
+      <img src="https://codetheworld.io/wp-content/uploads/2024/04/google-icon.png">
+      Google
+    </button>
+  </div>
+</form>

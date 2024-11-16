@@ -1,5 +1,4 @@
-
-<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="auth.css">
 <form class="form">
   <div class="flex-column">
     <label>Email</label>
@@ -18,29 +17,28 @@
     <i class="fa-solid fa-eye"></i>
   </div>
 
-  <div class="flex-row">
-    <div>
+  <div class="form-options">
+    <label class="checkbox-container">
       <input type="checkbox">
-      <label>Remember me</label>
-    </div>
-    <span class="span">Forgot password?</span>
+      <span class="checkmark"></span>
+      Remember me
+    </label>
+    <a href="#" class="forgot-link">Forgot password?</a>
   </div>
+
   <button class="button-submit">Sign In</button>
   <p class="p">
     Don't have an account?
     <a href="register.html">
-    <span class="span">Sign Up</span>
+      <span class="span">Sign Up</span>
+    </a>
   </p>
   <p class="p line">Or With</p>
 
-  <div class="flex-row">
-    <button class="btn">
+  <div>
+    <button class="btn google-btn">
       <img src="https://codetheworld.io/wp-content/uploads/2024/04/google-icon.png">
       Google
-    </button>
-    <button class="btn">
-      <img src="https://codetheworld.io/wp-content/uploads/2024/04/apple-icon.png">
-      Apple
     </button>
   </div>
 </form>
