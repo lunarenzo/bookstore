@@ -76,16 +76,22 @@ body {
 }
 
 .theme-toggle {
+    width: 100%;
     background: none;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 0.5rem;
+    padding: 0.75rem;
     border-radius: 0.5rem;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 0.75rem;
     transition: all 0.3s ease;
+}
+
+.theme-toggle-text {
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
 .theme-toggle-wrapper {
@@ -195,8 +201,13 @@ body {
         display: flex;
         justify-content: center;
     }
+    .theme-toggle-text {
+        display: none;
+    }
+    
     .theme-toggle {
-        margin-top: 0;
+        width: auto;
+        justify-content: center;
     }
 
     .nav-link {
