@@ -1,0 +1,212 @@
+/* Theme Variables remain the same */
+html[data-theme="dark"] {
+    --primary-color: #60A5FA;    
+    --primary-light: #93C5FD;    
+    --secondary-color: #DBEAFE;   
+    --bg-sidebar: #1E293B;       
+    --bg-main: #0F172A;          
+    --text-light: #F8FAFC;       
+    --text-muted: #94A3B8;       
+    --border-color: rgba(255, 255, 255, 0.08);
+    --hover-bg: rgba(96, 165, 250, 0.1);
+}
+
+html[data-theme="light"] {
+    --primary-color: #60A5FA;    
+    --primary-light: #3B82F6;    
+    --secondary-color: #EFF6FF;   
+    --bg-sidebar: #FFFFFF;        
+    --bg-main: #F8FAFC;          
+    --text-light: #1E293B;       
+    --text-muted: #64748B;       
+    --border-color: rgba(0, 0, 0, 0.06);
+    --hover-bg: rgba(96, 165, 250, 0.08);
+}
+
+/* Rest of the styles remain the same */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 280px;
+    background-color: var(--bg-sidebar);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    position: relative; /* Add this */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0 2rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-icon {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: -0.5px;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-wrapper {
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.theme-toggle:hover {
+    color: var(--primary-color);
+    background-color: var(--hover-bg);
+}
+
+.theme-toggle i {
+    font-size: 1.25rem;
+}
+
+.nav-section {
+    margin-bottom: 2rem;
+}
+
+.nav-content {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-left: 0.75rem;
+    font-weight: 600;
+}
+
+.nav-list {
+    list-style: none;
+}
+
+.nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    color: var(--text-light);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+}
+
+.nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.nav-link i {
+    font-size: 1.25rem;
+    width: 1.5rem;
+    text-align: center;
+}
+
+.nav-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Rest of the styles remain the same */
+.content {
+    flex: 1;
+    padding: 2rem;
+    background-color: var(--bg-main);
+}
+
+/* Media queries remain the same */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+        padding: 1rem;
+    }
+
+    .logo-text, .nav-title, .nav-text {
+        display: none;
+    }
+
+    .logo-wrapper {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .theme-toggle-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+    .theme-toggle {
+        margin-top: 0;
+    }
+
+    .nav-link {
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .nav-link i {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+    
+}
