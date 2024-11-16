@@ -175,6 +175,190 @@ body {
     background-color: var(--bg-main);
 }
 
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Background overlay */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: var(--bg-sidebar); /* Match sidebar background */
+    margin: 5% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.modal-title {
+    color: var(--text-light);
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Form Styling */
+label {
+    font-weight: 600;
+    color: var(--text-light);
+    display: block;
+    margin-bottom: 5px;
+    margin-top: 10px;
+}
+
+input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+button[type="submit"] {
+    padding: 12px;
+    background-color: var(--primary-color); /* Primary color for consistency */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: var(--primary-light); /* Slightly lighter on hover */
+}
+
+.close-btn {
+    color: var(--text-light);
+    font-size: 2rem;
+    font-weight: 700;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: var(--primary-color); /* Primary color on hover */
+}
+
+/* Button for "Add New Book" */
+.btn-primary {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-light);  /* Lighter on hover */
+}
+
+/* Table styling */
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.inventory-table th, .inventory-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.inventory-table th {
+    background-color: var(--bg-sidebar);
+    color: var(--text-light);
+}
+
+.inventory-table tr:hover {
+    background-color: var(--hover-bg);
+}
+
+.inventory-table .btn {
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.inventory-table .btn-edit {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.inventory-table .btn-edit:hover {
+    background-color: var(--primary-light);
+}
+
+.inventory-table .btn-delete {
+    background-color: #ff4c4c;
+    color: white;
+}
+
+.inventory-table .btn-delete:hover {
+    background-color: #ff3333;
+}
+
+/* Success message */
+.alert-success {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    display: none; /* Hide by default */
+}
+
+/* Error message */
+.alert-error {
+    background-color: #f44336; /* Red */
+    color: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    display: none; /* Hide by default */
+}
+
+/* Deleted message */
+.alert-deleted {
+    background-color: #2196F3; /* Blue */
+    color: white;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-size: 16px;
+    display: none; /* Hide by default */
+}
+
+/* Show messages */
+.show {
+    display: block;
+}
+
+
+
 /* Media queries remain the same */
 @media (max-width: 1024px) {
     .sidebar {

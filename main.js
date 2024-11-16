@@ -25,3 +25,52 @@ document.addEventListener('DOMContentLoaded', () => {
         themeText.textContent = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const openModalBtn = document.getElementById('openModalBtn');  // Button to open the modal
+    const addBookModal = document.getElementById('addBookModal');
+    const closeModalBtn = document.getElementById('closeModalBtn'); // Button to close the modal
+
+    // Open modal when 'Add New' button is clicked
+    openModalBtn.addEventListener('click', () => {
+        addBookModal.style.display = 'block';
+    });
+
+    // Close modal when 'x' button is clicked
+    closeModalBtn.addEventListener('click', () => {
+        addBookModal.style.display = 'none';
+    });
+
+    // Close modal if clicked outside of modal content
+    window.addEventListener('click', (event) => {
+        if (event.target === addBookModal) {
+            addBookModal.style.display = 'none';
+        }
+    });
+});
+
+window.onload = function() {
+    var successMessage = document.querySelector('.alert-success');
+    var errorMessage = document.querySelector('.alert-error');
+    var deletedMessage = document.querySelector('.alert-deleted');
+    
+    if (successMessage) {
+        setTimeout(function() {
+            successMessage.classList.remove('show');
+        }, 3000); // Hide after 3 seconds
+    }
+    
+    if (errorMessage) {
+        setTimeout(function() {
+            errorMessage.classList.remove('show');
+        }, 3000); // Hide after 3 seconds
+    }
+
+    if (deletedMessage) {
+        setTimeout(function() {
+            deletedMessage.classList.remove('show');
+        }, 3000); // Hide after 3 seconds
+    }
+};
+
+
