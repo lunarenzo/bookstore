@@ -73,4 +73,28 @@ window.onload = function() {
     }
 };
 
+  // Toggle password visibility for login
+  const togglePassword = document.getElementById('togglePassword');
+  const password = document.getElementById('password');
+  
+  togglePassword.addEventListener('click', function() {
+    // Toggle the type of the password field
+    const type = password.type === 'password' ? 'text' : 'password';
+    password.type = type;
+    
+    // Toggle the eye icon
+    this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
+  });
 
+  // Toggle confirm password visibility for register
+  const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+  const confirmPassword = document.getElementById('confirmPassword');
+  
+  toggleConfirmPassword.addEventListener('click', function() {
+    // Toggle the type of the confirm password field
+    const type = confirmPassword.type === 'password' ? 'text' : 'password';
+    confirmPassword.type = type;
+    
+    // Toggle the eye icon
+    this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
+  });

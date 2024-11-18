@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,58 +8,60 @@
   <title>Sign Up</title>
   <link rel="stylesheet" href="auth.css">
 </head>
+
 <body>
-<form class="form">
-  <div class="flex-column">
-    <label>Full Name</label>
-  </div>
-  <div class="form-input">
-    <i class="fa-solid fa-user"></i>
-    <input type="text" class="input" placeholder="Enter your Full Name">
-  </div>
+  <form class="form">
+    <div class="flex-column">
+      <label>Full Name</label>
+    </div>
+    <div class="form-input">
+      <i class="fa-solid fa-user"></i>
+      <input type="text" class="input" placeholder="Enter your Full Name">
+    </div>
 
-  <div class="flex-column">
-    <label>Email</label>
-  </div>
-  <div class="form-input">
-    <i class="fa-solid fa-at"></i>
-    <input type="email" class="input" placeholder="Enter your Email">
-  </div>
+    <div class="flex-column">
+      <label>Email</label>
+    </div>
+    <div class="form-input">
+      <i class="fa-solid fa-at"></i>
+      <input type="email" class="input" placeholder="Enter your Email">
+    </div>
 
-  <div class="flex-column">
-    <label>Password</label>
-  </div>
-  <div class="form-input">
-    <i class="fa-solid fa-lock"></i>
-    <input type="password" class="input" placeholder="Enter your Password">
-    <i class="fa-solid fa-eye"></i>
-  </div>
+    <div class="flex-column">
+      <label>Password</label>
+    </div>
+    <div class="form-input">
+      <i class="fa-solid fa-lock"></i>
+      <input type="password" class="input" id="password" placeholder="Enter your Password">
+      <i class="fa-solid fa-eye" id="togglePassword"></i>
+    </div>
 
-  <div class="flex-column">
-    <label>Confirm Password</label>
-  </div>
-  <div class="form-input">
-    <i class="fa-solid fa-lock"></i>
-    <input type="password" class="input" placeholder="Confirm your Password">
-    <i class="fa-solid fa-eye"></i>
-  </div>
+    <div class="flex-column">
+      <label>Confirm Password</label>
+    </div>
+    <div class="form-input">
+      <i class="fa-solid fa-lock"></i>
+      <input type="password" class="input" id="confirmPassword" placeholder="Confirm your Password">
+      <i class="fa-solid fa-eye" id="toggleConfirmPassword"></i>
+    </div>
 
-  <div class="form-options">
-    <label class="checkbox-container">
-      <input type="checkbox">
-      <span class="checkmark"></span>
-      I agree to the Terms & Conditions
-    </label>
-  </div>
+    <div class="form-options">
+      <label class="checkbox-container">
+        <input type="checkbox">
+        <span class="checkmark"></span>
+        I agree to the Terms & Conditions
+      </label>
+    </div>
 
-  <button class="button-submit">Sign Up</button>
-  <p class="p">
-    Already have an account? 
-    <a href="login.html">
-      <span class="span">Sign In</span>
-    </a>
-  </p>
+    <button class="button-submit">Sign Up</button>
+    <p class="p">
+      Already have an account?
+      <a href="login.html">
+        <span class="span">Sign In</span>
+      </a>
+    </p>
 
-</form>
+  </form>
 </body>
+<script src="main.js"></script>
 </html>
