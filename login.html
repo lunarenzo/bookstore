@@ -10,13 +10,13 @@
 </head>
 
 <body>
-  <form class="form">
+  <form class="form" action="login.php" method="POST">
     <div class="flex-column">
       <label>Email</label>
     </div>
     <div class="form-input">
       <i class="fa-solid fa-at"></i>
-      <input type="text" class="input" placeholder="Enter your Email">
+      <input type="text" name="email" class="input" placeholder="Enter your Email" required>
     </div>
 
     <div class="flex-column">
@@ -24,7 +24,7 @@
     </div>
     <div class="form-input">
       <i class="fa-solid fa-lock"></i>
-      <input type="password" class="input" id="password" placeholder="Enter your Password">
+      <input type="password" name="password" class="input" id="password" placeholder="Enter your Password" required>
       <i class="fa-solid fa-eye" id="togglePassword"></i>
     </div>
 
@@ -37,7 +37,7 @@
       <a href="#" class="forgot-link">Forgot password?</a>
     </div>
 
-    <button class="button-submit">Sign In</button>
+    <button type="submit" class="button-submit">Sign In</button>
     <p class="p">
       Don't have an account?
       <a href="register.html">
