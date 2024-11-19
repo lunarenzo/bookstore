@@ -26,6 +26,7 @@ if (isset($_POST['add_book'])) {
     $date_published = $_POST['date_published'];
     $isbn = $_POST['isbn']; // Get ISBN from the form
     $genre = $_POST['genre'];
+    
 
     // Check if the ISBN already exists in the database
     $isbn_check_query = "SELECT * FROM bookstore WHERE isbn = ?";
@@ -58,7 +59,7 @@ if (isset($_POST['add_book'])) {
 
                     $stmt = mysqli_prepare($conn, $sql);
                     // Bind parameters: 'ssdsdss' corresponds to title, author, price, date_published, genre, file_name, isbn
-                    mysqli_stmt_bind_param($stmt, 'ssdsdss', $title, $author, $price, $date_published, $genre, $file_name, $isbn);
+                    mysqli_stmt_bind_param($stmt, 'ssdssss', $title, $author, $price, $date_published, $genre, $file_name, $isbn);
 
                     if (mysqli_stmt_execute($stmt)) {
                         $success_message = 'New book added successfully!';
@@ -73,6 +74,41 @@ if (isset($_POST['add_book'])) {
             }
         } else {
             $error_message = 'No file uploaded or an error occurred during upload.';
+        }
+    }
+}
+
+
+// Handle form submission for editing an existing book
+if (isset($_POST['edit_book'])) {
+    $book_id = $_POST['book_id'];
+    $title = $_POST['title'];
+    $author = $_POST['author'];
+    $price = $_POST['price'];
+    $date_published = $_POST['date_published'];
+    $isbn = $_POST['isbn'];
+    $genre = $_POST['genre'];
+
+    // Check if the ISBN already exists (if it's being changed)
+    $isbn_check_query = "SELECT * FROM bookstore WHERE isbn = ? AND id != ?";
+    $stmt = mysqli_prepare($conn, $isbn_check_query);
+    mysqli_stmt_bind_param($stmt, 'si', $isbn, $book_id);
+    mysqli_stmt_execute($stmt);
+    $isbn_check_result = mysqli_stmt_get_result($stmt);
+
+    if (mysqli_num_rows($isbn_check_result) > 0) {
+        // ISBN already exists
+        $error_message = 'Error: This ISBN already exists in the database.';
+    } else {
+        // Update the book record in the database
+        $sql = "UPDATE bookstore SET title = ?, author = ?, price = ?, date_published = ?, genre = ?, isbn = ? WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, 'ssdssss', $title, $author, $price, $date_published, $genre, $isbn, $book_id);
+
+        if (mysqli_stmt_execute($stmt)) {
+            $success_message = 'Book updated successfully!';
+        } else {
+            $error_message = 'Error: ' . mysqli_error($conn);
         }
     }
 }
@@ -225,9 +261,10 @@ if (isset($_GET['error'])) {
         <table class="inventory-table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>ISBN</th>
                     <th>Title</th>
                     <th>Author</th>
+                    <th>Genre</th>
                     <th>Price</th>
                     <th>Date Published</th>
                     <th>Actions</th>
@@ -237,13 +274,14 @@ if (isset($_GET['error'])) {
                 <!-- PHP loop for displaying books -->
                 <?php while ($book = mysqli_fetch_assoc($result)): ?>
                     <tr>
-                        <td><?php echo $book['id']; ?></td>
+                        <td><?php echo $book['isbn']; ?></td>
                         <td><?php echo $book['title']; ?></td>
                         <td><?php echo $book['author']; ?></td>
+                        <td><?php echo $book['genre']; ?></td>
                         <td>$<?php echo $book['price']; ?></td>
                         <td><?php echo $book['date_published']; ?></td>
                         <td>
-                            <a href="edit_book.php?id=<?php echo $book['id']; ?>" class="btn btn-edit">Edit</a>
+                        <button class="btn btn-edit" onclick="openEditModal(<?php echo $book['id']; ?>)">Edit</button>
                             <a href="delete_book.php?id=<?php echo $book['id']; ?>" class="btn btn-delete">Delete</a>
                         </td>
                     </tr>
@@ -251,10 +289,10 @@ if (isset($_GET['error'])) {
             </tbody>
         </table>
 
+
 <!-- Add New Book Modal -->
 <div id="addBookModal" class="modal">
     <div class="modal-content">
-        <span id="closeModalBtn" class="close-btn">&times;</span>
         <h2 class="modal-title">Add New Book</h2>
         <form action="inventory.php" method="POST" enctype="multipart/form-data">
             <label for="title">Book Title</label>
@@ -278,10 +316,45 @@ if (isset($_GET['error'])) {
             <label for="book_cover">Book Cover</label>
             <input type="file" id="book_cover" name="book_cover" accept="image/*" required>
 
-            <button type="submit" name="add_book">Add Book</button>
+            <div class="modal-footer">
+                <button type="submit" name="add_book">Add Book</button>
+                <button type="button" class="btn btn-close" onclick="closeModal('addBookModal')">Close</button>
+            </div>
         </form>
     </div>
 </div>
+
+                <!-- Edit Book Modal -->
+        <div id="editBookModal" class="modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Edit Book</h2>
+                <form action="inventory.php" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" id="book_id" name="book_id">
+                    <label for="title">Book Title</label>
+                    <input type="text" id="edit_title" name="title" required>
+
+                    <label for="isbn">ISBN</label>
+                    <input type="text" id="edit_isbn" name="isbn" required>
+
+                    <label for="author">Author</label>
+                    <input type="text" id="edit_author" name="author" required>
+
+                    <label for="price">Price</label>
+                    <input type="number" id="edit_price" name="price" required step="0.01">
+
+                    <label for="genre">Genre</label>
+                    <input type="text" id="edit_genre" name="genre" required>
+
+                    <label for="date_published">Date Published</label>
+                    <input type="date" id="edit_date_published" name="date_published" required>
+                    <div class="modal-footer">
+                        <button type="submit" name="edit_book">Update Book</button>
+                        <button type="button" class="btn btn-close" onclick="closeModal('editBookModal')">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
 <br>
 <br>
 
@@ -306,8 +379,7 @@ if (isset($_GET['error'])) {
         </div>
     <?php endwhile; ?>
 </div>
-
-    </main>
+</main>
 
     <!-- Close the database connection -->
 <?php
@@ -316,7 +388,6 @@ if (isset($conn) && $conn) {
     mysqli_close($conn);
 }
 ?>
-
 <script src="main.js"></script>
 </body>
 </html>

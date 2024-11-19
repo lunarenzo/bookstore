@@ -198,6 +198,14 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+/* Optional: Center modal content */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
 .modal-title {
     color: var(--text-light);
     font-size: 1.5rem;
@@ -205,6 +213,55 @@ body {
     font-weight: 600;
     text-align: center;
 }
+
+.modal-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between buttons */
+    align-items: center; /* Center align buttons */
+}
+
+
+
+/* Ensure the Update/Add button takes the full width */
+.modal-footer .btn-primary {
+    width: 100%; /* Ensure the button spans the full width */
+}
+
+.modal footer .btn-close {
+    color: #FF6B6B;  /* Pale red color */
+    font-size: 1.5rem;  /* Slightly smaller font size */
+    font-weight: bold;  /* Bolder text for emphasis */
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    background-color: transparent;  /* Transparent background */
+    border: none;  /* Remove default border */
+    padding: 0;  /* Remove default padding */
+    border-radius: 50%;  /* Circular button shape */
+    width: 30px;  /* Set width and height for the circle */
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal footer .btn-close {
+    background-color: var(--primary-color);  /* Primary color background on hover */
+    color: white;  /* White color when hovered */
+    transform: scale(1.1);  /* Slightly enlarge on hover for interactivity */
+}
+
+.modal footer .btn-close {
+    outline: none;  /* Remove focus outline */
+}
+
+.modal footer .btn-close {
+    transform: scale(0.95);  /* Slightly shrink the button on active state */
+}
+
 
 /* Form Styling */
 label {
@@ -237,12 +294,15 @@ label {
 }
 
 .book-cover {
-    width: 150px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
+    width: 100%;               /* Ensure the image takes up full width of its parent */
+    max-width: 150px;          /* Prevent the image from getting too wide */
+    height: auto;              /* Let the height adjust proportionally */
+    max-height: 200px;         /* Prevent the image from exceeding the card's height */
+    object-fit: cover;         /* Ensure the image covers the area without stretching */
+    border-radius: 4px;
     margin-bottom: 15px;
 }
+
 
 .book-details h3 {
     font-size: 1.2rem;
@@ -281,20 +341,27 @@ input[type="file"]::file-selector-button:hover {
     background-color: var(--primary-light);
 }
 
+/* Universal Button Styling */
+button, .btn {
+    padding: 10px 20px;               /* Unified padding for all buttons */
+    font-size: 1rem;                   /* Ensure consistent font size */
+    font-weight: 500;                  /* Maintain uniform font weight */
+    border-radius: 5px;                /* Rounded corners for all buttons */
+    border: none;                     /* Remove default border */
+    cursor: pointer;                  /* Pointer cursor for buttons */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+/* Submit Button */
 button[type="submit"] {
-    padding: 12px;
-    background-color: var(--primary-color); /* Primary color for consistency */
+    background-color: var(--primary-color); /* Primary color */
     color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
     width: 100%;
-    transition: background-color 0.3s ease;
+    font-size: 1rem;
 }
 
 button[type="submit"]:hover {
-    background-color: var(--primary-light); /* Slightly lighter on hover */
+    background-color: var(--primary-light); /* Lighter on hover */
 }
 
 .close-btn {
@@ -311,20 +378,14 @@ button[type="submit"]:hover {
     color: var(--primary-color); /* Primary color on hover */
 }
 
-/* Button for "Add New Book" */
+/* Add New Book Button */
 .btn-primary {
-    padding: 10px 20px;
     background-color: var(--primary-color);
     color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: var(--primary-light);  /* Lighter on hover */
+    background-color: var(--primary-light);
 }
 
 /* Table styling */
@@ -332,28 +393,45 @@ button[type="submit"]:hover {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background-color: var(--bg-sidebar); /* Same as sidebar background color */
+    border-radius: 8px; /* Rounded corners for a soft look */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
 }
 
+/* Table header styling */
 .inventory-table th, .inventory-table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color); /* Consistent border with rest of UI */
 }
 
 .inventory-table th {
-    background-color: var(--bg-sidebar);
-    color: var(--text-light);
+    background-color: var(--bg-sidebar); /* Sidebar-like background for header */
+    color: var(--text-light);            /* Light text color for header */
+    font-size: 1rem;                     /* Consistent font size */
+    font-weight: 600;                    /* Slightly bolder for header */
 }
 
+/* Table row hover effect */
 .inventory-table tr:hover {
-    background-color: var(--hover-bg);
+    background-color: var(--hover-bg); /* Consistent hover effect */
+    cursor: pointer;
 }
 
+/* Flexbox Container for Buttons */
+.inventory-table .btn-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+/* Button styling */
 .inventory-table .btn {
     padding: 6px 12px;
     border-radius: 5px;
     text-decoration: none;
     font-weight: 500;
+    display: inline-block;
 }
 
 .inventory-table .btn-edit {
@@ -373,6 +451,22 @@ button[type="submit"]:hover {
 .inventory-table .btn-delete:hover {
     background-color: #ff3333;
 }
+
+
+
+/* Responsive Button Styling */
+@media (max-width: 768px) {
+    .inventory-table .btn-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .inventory-table .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
 
 /* Success message */
 .alert-success {

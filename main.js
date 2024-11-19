@@ -29,25 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const openModalBtn = document.getElementById('openModalBtn');  // Button to open the modal
     const addBookModal = document.getElementById('addBookModal');
-    const closeModalBtn = document.getElementById('closeModalBtn'); // Button to close the modal
 
     // Open modal when 'Add New' button is clicked
     openModalBtn.addEventListener('click', () => {
         addBookModal.style.display = 'block';
     });
-
-    // Close modal when 'x' button is clicked
-    closeModalBtn.addEventListener('click', () => {
-        addBookModal.style.display = 'none';
-    });
-
-    // Close modal if clicked outside of modal content
-    window.addEventListener('click', (event) => {
-        if (event.target === addBookModal) {
-            addBookModal.style.display = 'none';
-        }
-    });
 });
+
+
 
 window.onload = function() {
     var successMessage = document.querySelector('.alert-success');
@@ -98,3 +87,27 @@ window.onload = function() {
     // Toggle the eye icon
     this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
   });
+
+
+  function openEditModal(bookId) {
+    // Fetch book data and populate the form
+    fetch('get_book_details.php?id=' + bookId)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('book_id').value = data.id;
+            document.getElementById('edit_title').value = data.title;
+            document.getElementById('edit_isbn').value = data.isbn;
+            document.getElementById('edit_author').value = data.author;
+            document.getElementById('edit_price').value = data.price;
+            document.getElementById('edit_genre').value = data.genre;
+            document.getElementById('edit_date_published').value = data.date_published;
+            document.getElementById('editBookModal').style.display = 'block';
+        });
+}
+
+
+// Function to close the modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = "none"; // Hide the modal
+}   
