@@ -24,16 +24,61 @@ if (isset($_POST['add_book'])) {
     $author = $_POST['author'];
     $price = $_POST['price'];
     $date_published = $_POST['date_published'];
+    $isbn = $_POST['isbn']; // Get ISBN from the form
+    $genre = $_POST['genre'];
 
-    // Insert into the database
-    $sql = "INSERT INTO bookstore (title, author, price, date_published) VALUES ('$title', '$author', '$price', '$date_published')";
-    
-    if (mysqli_query($conn, $sql)) {
-        $success_message = 'New book added successfully!';
+    // Check if the ISBN already exists in the database
+    $isbn_check_query = "SELECT * FROM bookstore WHERE isbn = ?";
+    $stmt = mysqli_prepare($conn, $isbn_check_query);
+    mysqli_stmt_bind_param($stmt, 's', $isbn); // 's' means string type
+    mysqli_stmt_execute($stmt);
+    $isbn_check_result = mysqli_stmt_get_result($stmt);
+
+    if (mysqli_num_rows($isbn_check_result) > 0) {
+        // ISBN already exists
+        $error_message = 'Error: This ISBN already exists in the database.';
     } else {
-        $error_message = 'Error: ' . mysqli_error($conn);
+        // Handle file upload
+        if (isset($_FILES['book_cover']) && $_FILES['book_cover']['error'] == 0) {
+            $book_cover = $_FILES['book_cover'];
+
+            // Check file type and size (optional)
+            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $file_extension = pathinfo($book_cover['name'], PATHINFO_EXTENSION);
+            if (in_array(strtolower($file_extension), $allowed_extensions) && $book_cover['size'] <= 2000000) { // 2MB limit
+                $upload_dir = 'uploads/';
+                $file_name = uniqid() . '.' . $file_extension;
+                $upload_path = $upload_dir . $file_name;
+
+                // Move the file to the uploads folder
+                if (move_uploaded_file($book_cover['tmp_name'], $upload_path)) {
+                    // Insert into the database using a prepared statement
+                    $sql = "INSERT INTO bookstore (title, author, price, date_published, genre, book_cover, isbn) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?)"; 
+
+                    $stmt = mysqli_prepare($conn, $sql);
+                    // Bind parameters: 'ssdsdss' corresponds to title, author, price, date_published, genre, file_name, isbn
+                    mysqli_stmt_bind_param($stmt, 'ssdsdss', $title, $author, $price, $date_published, $genre, $file_name, $isbn);
+
+                    if (mysqli_stmt_execute($stmt)) {
+                        $success_message = 'New book added successfully!';
+                    } else {
+                        $error_message = 'Error: ' . mysqli_error($conn);
+                    }
+                } else {
+                    $error_message = 'Failed to upload the file.';
+                }
+            } else {
+                $error_message = 'Invalid file type or size.';
+            }
+        } else {
+            $error_message = 'No file uploaded or an error occurred during upload.';
+        }
     }
 }
+
+
+
 
 // Fetch all books from the database
 $sql = "SELECT * FROM bookstore";
@@ -48,9 +93,6 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
 if (isset($_GET['error'])) {
     $error_message = $_GET['error'];
 }
-
-// Close the database connection
-mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -77,7 +119,7 @@ mysqli_close($conn);
                 <h2 class="nav-title">Store Management</h2>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="index.html" class="nav-link active">
+                        <a href="index.php" class="nav-link active">
                             <i class="fas fa-chart-line"></i>
                             <span class="nav-text">Overview</span>
                         </a>
@@ -209,30 +251,71 @@ mysqli_close($conn);
             </tbody>
         </table>
 
-        <!-- Add New Book Modal -->
-        <div id="addBookModal" class="modal">
-            <div class="modal-content">
-                <span id="closeModalBtn" class="close-btn">&times;</span>
-                <h2 class="modal-title">Add New Book</h2>
-                <form action="inventory.php" method="POST">
-                    <label for="title">Book Title</label>
-                    <input type="text" id="title" name="title" placeholder="Enter book title" required>
+<!-- Add New Book Modal -->
+<div id="addBookModal" class="modal">
+    <div class="modal-content">
+        <span id="closeModalBtn" class="close-btn">&times;</span>
+        <h2 class="modal-title">Add New Book</h2>
+        <form action="inventory.php" method="POST" enctype="multipart/form-data">
+            <label for="title">Book Title</label>
+            <input type="text" id="title" name="title" placeholder="Enter book title" required>
 
-                    <label for="author">Author</label>
-                    <input type="text" id="author" name="author" placeholder="Enter author name" required>
+            <label for="isbn">ISBN</label>
+            <input type="text" id="isbn" name="isbn" placeholder="Enter ISBN" required>
 
-                    <label for="price">Price</label>
-                    <input type="number" id="price" name="price" placeholder="Enter price" required step="0.01">
+            <label for="author">Author</label>
+            <input type="text" id="author" name="author" placeholder="Enter author name" required>
 
-                    <label for="date_published">Date Published</label>
-                    <input type="date" id="date_published" name="date_published" required>
+            <label for="price">Price</label>
+            <input type="number" id="price" name="price" placeholder="Enter price" required step="0.01">
 
-                    <button type="submit" name="add_book">Add Book</button>
-                </form>
+            <label for="genre">Genre</label>
+            <input type="text" id="genre" name="genre" placeholder="Enter genre" required>
+
+            <label for="date_published">Date Published</label>
+            <input type="date" id="date_published" name="date_published" required>
+
+            <label for="book_cover">Book Cover</label>
+            <input type="file" id="book_cover" name="book_cover" accept="image/*" required>
+
+            <button type="submit" name="add_book">Add Book</button>
+        </form>
+    </div>
+</div>
+<br>
+<br>
+
+<!-- Recently Added Books Section -->
+<h2>Recently Added Books</h2>
+<div class="recent-books">
+    <!-- PHP loop to fetch the 3 most recent books -->
+    <?php
+    $recent_books_query = "SELECT * FROM bookstore ORDER BY id DESC LIMIT 5";
+    $recent_books_result = mysqli_query($conn, $recent_books_query);
+
+    while ($recent_book = mysqli_fetch_assoc($recent_books_result)): ?>
+        <div class="book-card">
+            <img src="uploads/<?php echo $recent_book['book_cover']; ?>" alt="<?php echo $recent_book['title']; ?>" class="book-cover">
+            <div class="book-details">
+                <h3><?php echo $recent_book['title']; ?></h3>
+                <p><strong>Author:</strong> <?php echo $recent_book['author']; ?></p>
+                <p><strong>Genre:</strong> <?php echo $recent_book['genre']; ?></p>
+                <p><strong>Price:</strong> $<?php echo $recent_book['price']; ?></p>
+                <p><strong>Date:</strong> <?php echo $recent_book['date_published']; ?></p>
             </div>
         </div>
+    <?php endwhile; ?>
+</div>
 
     </main>
+
+    <!-- Close the database connection -->
+<?php
+// Ensure all database operations are done before closing the connection
+if (isset($conn) && $conn) {
+    mysqli_close($conn);
+}
+?>
 
 <script src="main.js"></script>
 </body>
