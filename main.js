@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', () => {
         const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
+
         html.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
         updateThemeUI(newTheme);
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateThemeUI(theme) {
         // Update icon
         themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        
+
         // Update text
         themeText.textContent = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     }
@@ -32,64 +32,64 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Open modal when 'Add New' button is clicked
     openModalBtn.addEventListener('click', () => {
-        addBookModal.style.display = 'block';
+        addBookModal.style.display = 'flex';
     });
 });
 
 
 
-window.onload = function() {
+window.onload = function () {
     var successMessage = document.querySelector('.alert-success');
     var errorMessage = document.querySelector('.alert-error');
     var deletedMessage = document.querySelector('.alert-deleted');
-    
+
     if (successMessage) {
-        setTimeout(function() {
+        setTimeout(function () {
             successMessage.classList.remove('show');
         }, 3000); // Hide after 3 seconds
     }
-    
+
     if (errorMessage) {
-        setTimeout(function() {
+        setTimeout(function () {
             errorMessage.classList.remove('show');
         }, 3000); // Hide after 3 seconds
     }
 
     if (deletedMessage) {
-        setTimeout(function() {
+        setTimeout(function () {
             deletedMessage.classList.remove('show');
         }, 3000); // Hide after 3 seconds
     }
 };
 
-  // Toggle password visibility for login
-  const togglePassword = document.getElementById('togglePassword');
-  const password = document.getElementById('password');
-  
-  togglePassword.addEventListener('click', function() {
+// Toggle password visibility for login
+const togglePassword = document.getElementById('togglePassword');
+const password = document.getElementById('password');
+
+togglePassword.addEventListener('click', function () {
     // Toggle the type of the password field
     const type = password.type === 'password' ? 'text' : 'password';
     password.type = type;
-    
+
     // Toggle the eye icon
     this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
-  });
+});
 
-  // Toggle confirm password visibility for register
-  const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-  const confirmPassword = document.getElementById('confirmPassword');
-  
-  toggleConfirmPassword.addEventListener('click', function() {
+// Toggle confirm password visibility for register
+const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+const confirmPassword = document.getElementById('confirmPassword');
+
+toggleConfirmPassword.addEventListener('click', function () {
     // Toggle the type of the confirm password field
     const type = confirmPassword.type === 'password' ? 'text' : 'password';
     confirmPassword.type = type;
-    
+
     // Toggle the eye icon
     this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
-  });
+});
 
 
-  function openEditModal(bookId) {
+function openEditModal(bookId) {
     // Fetch book data and populate the form
     fetch('get_book_details.php?id=' + bookId)
         .then(response => response.json())
@@ -101,7 +101,7 @@ window.onload = function() {
             document.getElementById('edit_price').value = data.price;
             document.getElementById('edit_genre').value = data.genre;
             document.getElementById('edit_date_published').value = data.date_published;
-            document.getElementById('editBookModal').style.display = 'block';
+            document.getElementById('editBookModal').style.display = 'flex';
         });
 }
 

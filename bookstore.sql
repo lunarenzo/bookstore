@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2024 at 03:52 PM
+-- Generation Time: Nov 20, 2024 at 04:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -44,8 +44,28 @@ CREATE TABLE `bookstore` (
 --
 
 INSERT INTO `bookstore` (`id`, `title`, `isbn`, `author`, `price`, `genre`, `date_published`, `book_cover`, `created_at`) VALUES
-(28, '1984', '1443434973', 'George Orwell', 10.00, 'Dystopia', '1949-06-08', '673c8d2ca1a52.jpg', '2024-11-19 13:05:48'),
-(29, 'Harry Potter and the Philosopher\'s Stone', '0747549559', 'J. K. Rowling', 8.00, 'Fantasy', '1997-06-26', '673c8f9bf1e1e.jpg', '2024-11-19 13:16:11');
+(29, 'Harry Potter and the Philosopher\'s Stone', '0747549559', 'J. K. Rowling', 8.00, 'Fantasy', '1997-06-26', '673dfd3c94ffd.jpg', '2024-11-19 13:16:11'),
+(37, '1984', '546546456', 'George Orwell', 10.00, 'Dystopia', '2024-11-20', '673dfef3b5be2.jpg', '2024-11-20 14:37:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `full_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `full_name`, `email`, `password`) VALUES
+(3, 'Renzo Luna', 'luna.renzo.zamora@gmail.com', '81dc9bdb52d04dc20036dbd8313ed055');
 
 --
 -- Indexes for dumped tables
@@ -66,7 +86,7 @@ ALTER TABLE `bookstore`
 -- AUTO_INCREMENT for table `bookstore`
 --
 ALTER TABLE `bookstore`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

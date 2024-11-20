@@ -175,91 +175,196 @@ body {
     background-color: var(--bg-main);
 }
 
-/* Modal Styling */
+/* Modal Redesign */
 .modal {
-    display: none; /* Hidden by default */
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); /* Background overlay */
-    padding-top: 60px;
-}
-
-.modal-content {
-    background-color: var(--bg-sidebar); /* Match sidebar background */
-    margin: 5% auto;
-    padding: 30px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 500px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-}
-
-/* Optional: Center modal content */
-.modal-content {
-    display: flex;
-    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
     align-items: center;
-    gap: 20px;
+    padding: 20px;
+}
+
+.modal-container {
+    background-color: var(--bg-sidebar);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .modal-title {
     color: var(--text-light);
     font-size: 1.5rem;
-    margin-bottom: 20px;
     font-weight: 600;
-    text-align: center;
+    margin: 0;
 }
 
-.modal-footer {
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: var(--primary-color);
+}
+
+.modal-form {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Space between buttons */
-    align-items: center; /* Center align buttons */
 }
 
-
-
-/* Ensure the Update/Add button takes the full width */
-.modal-footer .btn-primary {
-    width: 100%; /* Ensure the button spans the full width */
+.modal-body {
+    padding: 20px;
 }
 
-.modal footer .btn-close {
-    color: #FF6B6B;  /* Pale red color */
-    font-size: 1.5rem;  /* Slightly smaller font size */
-    font-weight: bold;  /* Bolder text for emphasis */
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-    background-color: transparent;  /* Transparent background */
-    border: none;  /* Remove default border */
-    padding: 0;  /* Remove default padding */
-    border-radius: 50%;  /* Circular button shape */
-    width: 30px;  /* Set width and height for the circle */
-    height: 30px;
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.form-group input {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-main);
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.file-upload {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    padding: 20px;
+    border: 2px dashed var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-main);
+    cursor: pointer;
+    transition: border-color 0.3s ease;
 }
 
-.modal footer .btn-close {
-    background-color: var(--primary-color);  /* Primary color background on hover */
-    color: white;  /* White color when hovered */
-    transform: scale(1.1);  /* Slightly enlarge on hover for interactivity */
+.file-upload:hover {
+    border-color: var(--primary-color);
 }
 
-.modal footer .btn-close {
-    outline: none;  /* Remove focus outline */
+.file-upload input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
 }
 
-.modal footer .btn-close {
-    transform: scale(0.95);  /* Slightly shrink the button on active state */
+.file-upload-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-light);
+}
+.file-upload-placeholder i {
+    font-size: 1.5rem;
+}
+
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-footer .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.modal-footer .btn i {
+    font-size: 1rem;
+}
+
+.modal-footer .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: var(--primary-light);
+}
+
+.modal-footer .btn-secondary {
+    background-color: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: var(--hover-bg);
+    color: var(--primary-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-container {
+        max-width: 95%;
+    }
 }
 
 
