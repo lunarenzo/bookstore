@@ -32,7 +32,7 @@ $result = mysqli_query($conn, $query);
             </div>
             <div class="nav-right">
                 <a href="cart.php"><i class="fa-light fa-cart-shopping"></i> Cart</a>
-                <a href="signin.php"><i class="fa-solid fa-user"></i> Sign In</a>
+                <a href="userauth.html"><i class="fa-solid fa-user"></i> Sign In</a>
             </div>
         </div>
     </nav>
