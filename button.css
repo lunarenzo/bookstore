@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://use.fontawesome.com/releases/v6.5.2/css/all.css');
+
+body {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  place-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: whitesmoke;
+  overflow: hidden;
+}
+
+*,
+::before,
+::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --clr-bg: #efefef;
+  --clr-primary: #0f172a;
+  --easing: cubic-bezier(0.47, 1.64, 0.41, 0.8);
+}
+
+button {
+  font-family: inherit;
+}
+
+.buttons {
+    width: 500px;
+    border-radius: 20px;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    font-family: Poppins, sans-serif;
+  }
+
+
+button {
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ffffff30;
+  color: #27262690;
+  padding: 1rem;
+  aspect-ratio: 1/1;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 300ms ease-in-out;
+}
+
+i {
+  font-size: 1.6rem;
+}
+
+p {
+  position: absolute;
+  width: 100%;
+  font-size: 0.8rem;
+  left: 0;
+  bottom: 0.5rem;
+  padding: 0.3rem;
+  text-align: center;
+  transition: all 150ms ease-in-out 0ms;
+  outline: none;
+  translate: 0 10px;
+  opacity: 0;
+}
+
+button:hover p {
+  opacity: 1;
+  translate: 0;
+  transition: all 300ms ease-in-out 150ms;
+}
+
+button:hover {
+  z-index: 10;
+  color: #fff;
+  transform: scale(1.15);
+  background-color: rgba(var(--bg), 0.5);
+}
