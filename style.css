@@ -148,14 +148,10 @@ body {
 }
 
 .nav-link:hover {
-    background-color: var(--hover-bg);
-    color: var(--primary-color);
-}
-
-.nav-link.active {
     background-color: var(--primary-color);
     color: white;
 }
+
 
 .nav-link i {
     font-size: 1.25rem;
