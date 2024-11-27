@@ -18,16 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateThemeUI(theme) {
-        // Update icon
         themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
 
-        // Update text
         themeText.textContent = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
     }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const openModalBtn = document.getElementById('openModalBtn');  // Button to open the modal
+    const openModalBtn = document.getElementById('openModalBtn');
     const addBookModal = document.getElementById('addBookModal');
 
     // Open modal when 'Add New' button is clicked
@@ -52,13 +50,13 @@ window.onload = function () {
     if (errorMessage) {
         setTimeout(function () {
             errorMessage.classList.remove('show');
-        }, 3000); // Hide after 3 seconds
+        }, 3000);
     }
 
     if (deletedMessage) {
         setTimeout(function () {
             deletedMessage.classList.remove('show');
-        }, 3000); // Hide after 3 seconds
+        }, 3000); 
     }
 };
 
@@ -67,12 +65,10 @@ const togglePassword = document.getElementById('togglePassword');
 const password = document.getElementById('password');
 
 togglePassword.addEventListener('click', function () {
-    // Toggle the type of the password field
     const type = password.type === 'password' ? 'text' : 'password';
     password.type = type;
 
-    // Toggle the eye icon
-    this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
+    this.classList.toggle('fa-eye-slash');
 });
 
 // Toggle confirm password visibility for register
@@ -80,17 +76,15 @@ const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
 const confirmPassword = document.getElementById('confirmPassword');
 
 toggleConfirmPassword.addEventListener('click', function () {
-    // Toggle the type of the confirm password field
     const type = confirmPassword.type === 'password' ? 'text' : 'password';
     confirmPassword.type = type;
 
-    // Toggle the eye icon
-    this.classList.toggle('fa-eye-slash'); // Change the icon to show password (closed eye)
+    this.classList.toggle('fa-eye-slash'); 
 });
 
 
 function openEditModal(bookId) {
-    // Fetch book data and populate the form
+    // Fetch book data
     fetch('get_book_details.php?id=' + bookId)
         .then(response => response.json())
         .then(data => {
@@ -109,5 +103,5 @@ function openEditModal(bookId) {
 // Function to close the modal
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
-    modal.style.display = "none"; // Hide the modal
+    modal.style.display = "none";
 }   

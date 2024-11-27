@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 20, 2024 at 04:27 PM
+-- Generation Time: Nov 27, 2024 at 02:57 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -45,7 +45,27 @@ CREATE TABLE `bookstore` (
 
 INSERT INTO `bookstore` (`id`, `title`, `isbn`, `author`, `price`, `genre`, `date_published`, `book_cover`, `created_at`) VALUES
 (29, 'Harry Potter and the Philosopher\'s Stone', '0747549559', 'J. K. Rowling', 8.00, 'Fantasy', '1997-06-26', '673dfd3c94ffd.jpg', '2024-11-19 13:16:11'),
-(37, '1984', '546546456', 'George Orwell', 10.00, 'Dystopia', '2024-11-20', '673dfef3b5be2.jpg', '2024-11-20 14:37:53');
+(37, '1984', '546546456', 'George Orwell', 10.00, 'Dystopian', '2024-11-20', '673dfef3b5be2.jpg', '2024-11-20 14:37:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `shopuser`
+--
+
+CREATE TABLE `shopuser` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `shopuser`
+--
+
+INSERT INTO `shopuser` (`id`, `email`, `password`) VALUES
+(0, 'john@e.com', '$2y$10$MDrWACPMryM6gXDBhX4zcuVYEc7X1IgodN9bvsrrMn7Qob1xbFEU2'),
+(0, 'test@e.com', '$2y$10$zb5jwe/ETLiHxfAAAJdswu8dkWpTfcQ.JIAdbBtVg0ISsrw99J7tO');
 
 -- --------------------------------------------------------
 
@@ -86,7 +106,7 @@ ALTER TABLE `bookstore`
 -- AUTO_INCREMENT for table `bookstore`
 --
 ALTER TABLE `bookstore`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

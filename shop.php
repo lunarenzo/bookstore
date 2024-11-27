@@ -1,6 +1,22 @@
 <?php
 // Database connection
-include 'db.php'; // Ensure this file has the database credentials.
+include 'db.php';
+
+// Start session to check login state
+session_start();
+
+// Handle logout if requested
+if(isset($_GET['logout']) && $_GET['logout'] == 'true') {
+    // Unset all session variables
+    $_SESSION = array();
+
+    // Destroy the session
+    session_destroy();
+
+    // Redirect to the same page without the logout parameter
+    header("Location: shop.php");
+    exit();
+}
 
 $genreFilter = isset($_GET['genre']) ? $_GET['genre'] : '';
 
@@ -18,7 +34,7 @@ $result = mysqli_query($conn, $query);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookverse</title>
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
-    <link rel="stylesheet" href="shop.css"> <!-- Add your CSS file -->
+    <link rel="stylesheet" href="shop.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -32,7 +48,14 @@ $result = mysqli_query($conn, $query);
             </div>
             <div class="nav-right">
                 <a href="cart.php"><i class="fa-light fa-cart-shopping"></i> Cart</a>
-                <a href="userauth.html"><i class="fa-solid fa-user"></i> Sign In</a>
+                <?php
+                // Check if user is logged in
+                if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+                    echo '<a href="shop.php?logout=true"><i class="fa-solid fa-user"></i> Log Out</a>';
+                } else {
+                    echo '<a href="userAuth.html"><i class="fa-solid fa-user"></i> Sign In</a>';
+                }
+                ?>
             </div>
         </div>
     </nav>
@@ -69,7 +92,6 @@ $result = mysqli_query($conn, $query);
         echo "<p>No books found.</p>";
     }
     ?>
-</div>
-
+    </div>
 </body>
 </html>
