@@ -5,13 +5,13 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
     // Redirect to login page if not logged in
-    header("Location: login.html");
+    header("Location: adminLogin.php");
     exit();
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en" data-theme="Light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -96,12 +96,6 @@ if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true)
                 </ul>
             </div>
         </nav>
-        <div class="theme-toggle-wrapper">
-            <button class="theme-toggle" aria-label="Toggle theme">
-                <i class="fas fa-moon"></i>
-                <span class="theme-toggle-text">Switch to Light Mode</span>
-            </button>
-        </div>
     </aside>
     <main class="content">
         <!-- Content area -->

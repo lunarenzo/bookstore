@@ -32,6 +32,19 @@ body {
   margin-bottom: 5px;
 }
 
+.title-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  letter-spacing: 1px;
+  margin: 1;
+}
+
 .form-input {
   height: 50px;
   border: 1.5px solid #ecedec;
@@ -67,18 +80,9 @@ body {
 /* Position for the Eye Icon */
 .form-input i.fa-eye {
   position: absolute;
-  right: 10px;  /* Place the eye icon on the right edge with some padding */
+  right: 10px;  
   cursor: pointer;
   color: #757575;
-}
-
-/* New checkbox design */
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin: 5px 0;
 }
 
 .forgot-link {
@@ -98,7 +102,7 @@ body {
   align-items: center;
   position: relative;
   padding-left: 28px;
-  margin-right: auto; /* This ensures it stays on the left */
+  margin-right: auto; 
   cursor: pointer;
   font-size: 14px;
   user-select: none;
@@ -184,7 +188,7 @@ body {
   margin-left: 5px;
 }
 
-/* Media Queries for responsiveness */
+/* for responsiveness */
 @media (max-width: 768px) {
   .form {
     width: 90%;
@@ -216,27 +220,27 @@ body {
   }
 
   .input {
-    width: 70%; /* Further reduce input width on very small screens */
+    width: 70%; 
   }
 
   .button-submit {
-    font-size: 13px; /* Even smaller button font size */
+    font-size: 13px; 
     height: 40px;
   }
 
   .fa-solid {
-    font-size: 16px; /* Adjust icon size further */
+    font-size: 16px; 
   }
 
   .checkbox-container {
-    font-size: 12px; /* Further reduce checkbox text */
+    font-size: 12px; 
   }
 
   .forgot-link {
-    font-size: 12px; /* Reduce font size of the "Forgot password" link */
+    font-size: 12px; 
   }
 
   .p {
-    font-size: 12px; /* Smaller paragraph text */
+    font-size: 12px; 
   }
 }

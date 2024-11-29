@@ -6,7 +6,7 @@ session_start();
 // Check if the user is logged in
 if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true) {
     // Redirect to login page if not logged in
-    header("Location: login.html");
+    header("Location: adminLogin.php");
     exit();
 }
 
@@ -26,6 +26,7 @@ if (isset($_POST['add_book'])) {
     $date_published = $_POST['date_published'];
     $isbn = $_POST['isbn']; // Get ISBN from the form
     $genre = $_POST['genre'];
+    $stock_available = $_POST['stock_available'];
     
 
     // Check if the ISBN already exists in the database
@@ -36,7 +37,6 @@ if (isset($_POST['add_book'])) {
     $isbn_check_result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($isbn_check_result) > 0) {
-        // ISBN already exists
         $error_message = 'Error: This ISBN already exists in the database.';
     } else {
         // Handle file upload
@@ -54,12 +54,12 @@ if (isset($_POST['add_book'])) {
                 // Move the file to the uploads folder
                 if (move_uploaded_file($book_cover['tmp_name'], $upload_path)) {
                     // Insert into the database using a prepared statement
-                    $sql = "INSERT INTO bookstore (title, author, price, date_published, genre, book_cover, isbn) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?)"; 
+                    $sql = "INSERT INTO bookstore (title, author, price, date_published, genre, book_cover, isbn, stock_available) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)"; 
 
                     $stmt = mysqli_prepare($conn, $sql);
                     // Bind parameters: 'ssdssss' corresponds to title, author, price, date_published, genre, file_name, isbn
-                    mysqli_stmt_bind_param($stmt, 'ssdssss', $title, $author, $price, $date_published, $genre, $file_name, $isbn);
+                    mysqli_stmt_bind_param($stmt, 'ssdssssi', $title, $author, $price, $date_published, $genre, $file_name, $isbn, $stock_available);
 
                     if (mysqli_stmt_execute($stmt)) {
                         $success_message = 'New book added successfully!';
@@ -87,6 +87,7 @@ if (isset($_POST['edit_book'])) {
     $date_published = $_POST['date_published'];
     $isbn = $_POST['isbn'];
     $genre = $_POST['genre'];
+    $stock_available = $_POST['stock_available'];
 
     // Check if a new book cover is uploaded
     $update_cover = false;
@@ -125,13 +126,13 @@ if (isset($_POST['edit_book'])) {
 
     // Prepare SQL query based on whether cover is updated
     if ($update_cover) {
-        $sql = "UPDATE bookstore SET title = ?, author = ?, price = ?, date_published = ?, genre = ?, isbn = ?, book_cover = ? WHERE id = ?";
+        $sql = "UPDATE bookstore SET title = ?, author = ?, price = ?, date_published = ?, genre = ?, isbn = ?, book_cover = ?, stock_available = ? WHERE id = ?";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssdssssi', $title, $author, $price, $date_published, $genre, $isbn, $new_book_cover, $book_id);
+        mysqli_stmt_bind_param($stmt, 'ssdssssii', $title, $author, $price, $date_published, $genre, $isbn, $new_book_cover, $stock_available, $book_id);
     } else {
-        $sql = "UPDATE bookstore SET title = ?, author = ?, price = ?, date_published = ?, genre = ?, isbn = ? WHERE id = ?";
+        $sql = "UPDATE bookstore SET title = ?, author = ?, price = ?, date_published = ?, genre = ?, isbn = ?, stock_available = ? WHERE id = ?";
         $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, 'ssdsssi', $title, $author, $price, $date_published, $genre, $isbn, $book_id);
+        mysqli_stmt_bind_param($stmt, 'ssdsssii', $title, $author, $price, $date_published, $genre, $isbn, $stock_available, $book_id);
     }
 
     if (mysqli_stmt_execute($stmt)) {
@@ -164,7 +165,7 @@ if (isset($_GET['error'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en" data-theme="Light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -249,12 +250,6 @@ if (isset($_GET['error'])) {
                 </ul>
             </div>
         </nav>
-        <div class="theme-toggle-wrapper">
-            <button class="theme-toggle" aria-label="Toggle theme">
-                <i class="fas fa-moon"></i>
-                <span class="theme-toggle-text">Switch to Light Mode</span>
-            </button>
-        </div>
     </aside>
     <main class="content">
         <h1>Book Inventory</h1>
@@ -281,6 +276,7 @@ if (isset($_GET['error'])) {
                     <th>Author</th>
                     <th>Genre</th>
                     <th>Price</th>
+                    <th>Stock Available</th>
                     <th>Date Published</th>
                     <th>Actions</th>
                 </tr>
@@ -293,6 +289,7 @@ if (isset($_GET['error'])) {
                         <td><?php echo $book['author']; ?></td>
                         <td><?php echo $book['genre']; ?></td>
                         <td>$<?php echo $book['price']; ?></td>
+                        <td><?php echo $book['stock_available']; ?></td>
                         <td><?php echo $book['date_published']; ?></td>
                         <td>
                         <button class="btn btn-edit" onclick="openEditModal(<?php echo $book['id']; ?>)">Edit</button>
@@ -332,6 +329,10 @@ if (isset($_GET['error'])) {
                     <div class="form-group">
                         <label for="price">Price</label>
                         <input type="number" id="price" name="price" placeholder="Enter price" required step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label for="stock_available">Stock Available</label>
+                        <input type="number" id="stock_available" name="stock_available" min="0" required>
                     </div>
                     <div class="form-group">
                         <label for="genre">Genre</label>
@@ -397,6 +398,10 @@ if (isset($_GET['error'])) {
                     <input type="number" id="edit_price" name="price" required step="0.01">
                 </div>
                 <div class="form-group">
+                    <label for="stock_available">Stock Available</label>
+                    <input type="number" id="stock_available" name="stock_available" min="0" required>
+                </div>
+                <div class="form-group">
                     <label for="edit_genre">Genre</label>
                     <input type="text" id="edit_genre" name="genre" required>
                 </div>
@@ -448,6 +453,7 @@ if (isset($_GET['error'])) {
                 <p><strong>Author:</strong> <?php echo $recent_book['author']; ?></p>
                 <p><strong>Genre:</strong> <?php echo $recent_book['genre']; ?></p>
                 <p><strong>Price:</strong> $<?php echo $recent_book['price']; ?></p>
+                <p><strong>Stock Available:</strong> <?php echo $recent_book['stock_available']; ?></p>
                 <p><strong>Date:</strong> <?php echo $recent_book['date_published']; ?></p>
             </div>
         </div>

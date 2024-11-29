@@ -55,8 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("ss", $email, $password_hash);
             if ($stmt->execute()) {
                 // Redirect to login page after successful registration
-                header("Location: userauth.html");  // Corrected redirection URL
-                exit;
+                header("Location: userAuth.php");
+                exit; // Make sure the script exits after header redirection
             } else {
                 echo "Something went wrong. Please try again later.";
             }
@@ -66,7 +66,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Display error messages if there are any
         echo "Error: " . $email_err . " " . $password_err . " " . $confirm_password_err;
     }
+
     // Close the connection
     $conn->close();
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Bookverse</title>
+    <link rel="stylesheet" href="userauthStyle.css">
+</head>
+<body>
+  <main>
+    <div class="left-side"></div>
+    <div class="right-side">
+      <form method="POST">
+        <div class="title-section">
+          <h1 class="site-title">Sign Up</h1>
+        </div>
+  
+        <label for="email">Email</label>
+        <input type="text" placeholder="Enter Email" name="email" required />
+  
+        <label for="password">Password</label>
+        <input type="password" placeholder="Enter Password" name="password" required />
+  
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" placeholder="Confirm Password" name="confirm-password" required />
+  
+        <button type="submit" class="login-btn">Register</button>
+        <div class="links">
+          <a href="#">Forgot password?</a>
+          <a href="userAuth.php">Sign In</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

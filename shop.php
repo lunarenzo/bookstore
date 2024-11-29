@@ -53,7 +53,7 @@ $result = mysqli_query($conn, $query);
                 if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
                     echo '<a href="shop.php?logout=true"><i class="fa-solid fa-user"></i> Log Out</a>';
                 } else {
-                    echo '<a href="userAuth.html"><i class="fa-solid fa-user"></i> Sign In</a>';
+                    echo '<a href="userauth.php"><i class="fa-solid fa-user"></i> Sign In</a>';
                 }
                 ?>
             </div>
@@ -82,10 +82,24 @@ $result = mysqli_query($conn, $query);
         while ($row = mysqli_fetch_assoc($result)) {
             echo "<div class='book-item'>";
             echo "<img src='uploads/" . $row['book_cover'] . "' alt='" . $row['title'] . " cover' class='book-cover'>";
+
+                    // Stock availability badge
+        if ($row['stock_available'] > 0) {
+            echo "<span class='stock-badge in-stock'>" . $row['stock_available'] . " in stock</span>";
+        } else {
+            echo "<span class='stock-badge out-of-stock'>Out of stock</span>";
+        }
+
             echo "<h3>" . $row['title'] . "</h3>";
             echo "<p class='author'>" . $row['author'] . "</p>";
             echo "<p class='price'>$" . $row['price'] . "</p>";
+
+                    // Disable add to cart button if out of stock
+        if ($row['stock_available'] > 0) {
             echo "<button class='add-to-cart'>Add to Cart</button>";
+        } else {
+            echo "<button class='add-to-cart' disabled>Out of Stock</button>";
+        }
             echo "</div>";
         }
     } else {

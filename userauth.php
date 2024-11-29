@@ -63,3 +63,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Bookverse</title>
+    <link rel="stylesheet" href="userauthStyle.css">
+</head>
+<body>
+  <main>
+    <div class="left-side"></div>
+    <div class="right-side">
+      <form method="POST">
+        <div class="title-section">
+          <h1 class="site-title">Sign In</h1>
+        </div>
+  
+        <label for="email">Email</label>
+        <input type="text" placeholder="Enter Email" name="email" required />
+  
+        <label for="password">Password</label>
+        <input type="password" placeholder="Enter Password" name="password" required />
+  
+        <button type="submit" class="login-btn">Sign In</button>
+        <div class="links">
+          <a href="#">Forgot password?</a>
+          <a href="userReg.php">Sign Up</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
