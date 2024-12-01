@@ -200,7 +200,7 @@ if (isset($_GET['error'])) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="adminOrders.php" class="nav-link">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="nav-text">Orders</span>
                         </a>

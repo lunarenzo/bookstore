@@ -46,7 +46,7 @@ if (!isset($_SESSION['user_logged_in']) || $_SESSION['user_logged_in'] !== true)
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="adminOrders.php" class="nav-link">
+                        <a href="#" class="nav-link">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="nav-text">Orders</span>
                         </a>
