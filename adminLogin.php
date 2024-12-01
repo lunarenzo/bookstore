@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user_email'] = $email;
 
                 // Redirect to the dashboard or another page after successful login
-                header("Location: index.php"); // Change this to the actual page for the logged-in user
+                header("Location: adminOverview.php"); // Change this to the actual page for the logged-in user
                 exit();
             } else {
                 $login_error = "Invalid email or password!";
@@ -77,7 +77,7 @@ $conn->close();
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log In</title>
-  <link rel="stylesheet" href="adminAuth.css">
+  <link rel="stylesheet" href="css\adminAuth.css">
 </head>
 <body>
 

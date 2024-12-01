@@ -172,13 +172,14 @@ if (isset($_GET['error'])) {
     <title>Bookverse Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
+    <link rel="stylesheet" href="css\style.css">
 </head>
 <body>
     <aside class="sidebar">
         <div class="logo-container">
             <div class="logo-wrapper">
-                <i class="fas fa-book logo-icon"></i>
+                <i class="fa-solid fa-book-open-cover"></i>
                 <span class="logo-text">Bookverse</span>
             </div>
         </div>
@@ -188,13 +189,13 @@ if (isset($_GET['error'])) {
                 <h2 class="nav-title">Store Management</h2>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="index.php" class="nav-link active">
+                        <a href="adminOverview.php" class="nav-link active">
                             <i class="fas fa-chart-line"></i>
                             <span class="nav-text">Overview</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="inventory.php" class="nav-link">
+                        <a href="adminInventory.php" class="nav-link">
                             <i class="fas fa-cube"></i>
                             <span class="nav-text">Inventory</span>
                         </a>
@@ -205,44 +206,21 @@ if (isset($_GET['error'])) {
                             <span class="nav-text">Orders</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-users"></i>
-                            <span class="nav-text">Customers</span>
-                        </a>
-                    </li>
                 </ul>
             </div>
 
-            <div class="nav-section">
-                <h2 class="nav-title">Catalog</h2>
-                <ul class="nav-list">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-book"></i>
-                            <span class="nav-text">Books</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-tags"></i>
-                            <span class="nav-text">Categories</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
 
             <div class="nav-section">
                 <h2 class="nav-title">Settings</h2>
                 <ul class="nav-list">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="adminAccounts.php" class="nav-link">
                             <i class="fas fa-user-circle"></i>
                             <span class="nav-text">Account</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="logout.php" class="nav-link">
+                        <a href="adminLogout.php" class="nav-link">
                             <i class="fas fa-sign-out-alt"></i>
                             <span class="nav-text">Logout</span>
                         </a>
@@ -311,7 +289,7 @@ if (isset($_GET['error'])) {
             </button>
         </div>
         
-        <form action="inventory.php" method="POST" enctype="multipart/form-data" class="modal-form">
+        <form method="POST" enctype="multipart/form-data" class="modal-form">
             <div class="modal-body">
                 <div class="form-grid">
                     <div class="form-group">
@@ -377,7 +355,7 @@ if (isset($_GET['error'])) {
             </button>
         </div>
         
-        <form action="inventory.php" method="POST" enctype="multipart/form-data" class="modal-form">
+        <form method="POST" enctype="multipart/form-data" class="modal-form">
             <input type="hidden" id="book_id" name="book_id">
             <div class="modal-body">
             <div class="form-grid">
@@ -470,6 +448,6 @@ if (isset($conn) && $conn) {
 ?>
 
 </body>
-<script src="fileup.js"></script>
-<script src="main.js"></script>
+<script src="js/fileup.js"></script>
+<script src="js/main.js"></script>
 </html>

@@ -1,0 +1,118 @@
+.orders-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.orders-container h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.order-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    padding: 1.25rem;
+    border: 1px solid #eee;
+}
+
+.order-header {
+    margin-bottom: 1rem;
+}
+
+.order-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.order-id {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.order-date {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.order-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-processing { background: #cce5ff; color: #004085; }
+.status-shipped { background: #d4edda; color: #155724; }
+.status-delivered { background: #c3e6cb; color: #1e7e34; }
+.status-declined { background: #f8d7da; color: #721c24; }
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.order-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.order-item img {
+    width: 45px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.book-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.book-details h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.author {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.quantity-price {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.item-total {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.total-amount {
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: right;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}

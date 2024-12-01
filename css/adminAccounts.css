@@ -1,0 +1,151 @@
+.main-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.customer-table {
+    width: 100%;
+    min-width: 1000px;
+}
+
+.inventory-table {
+    font-size: 1rem !important;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 1rem 1.5rem !important;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+}
+
+.stats-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.stats-card {
+    background: var(--bg-sidebar);
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 200px;
+}
+
+.stats-icon {
+    background: var(--primary-color);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+}
+
+.stats-value {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.stats-label {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+.custom-alert {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    text-align: center;
+    min-width: 320px;
+}
+
+.custom-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.custom-alert-title {
+    color: #DC2626;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.custom-alert-message {
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+}
+
+.custom-alert-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn-alert-cancel {
+    background-color: #9CA3AF;
+    color: white;
+}
+
+.btn-alert-delete {
+    background-color: #DC2626;
+    color: white;
+}
+
+.btn-alert-cancel:hover {
+    background-color: #6B7280;
+}
+
+.btn-alert-delete:hover {
+    background-color: #B91C1C;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert.success {
+    background-color: #C6F6D5;
+    color: #2E865F;
+}
+
+.alert.error {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+}

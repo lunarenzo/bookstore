@@ -1,5 +1,7 @@
 <?php
-session_start();
+// Include session check
+require_once 'check_user_session.php';
+
 require_once 'db.php';
 
 // Check if user is logged in
@@ -61,8 +63,8 @@ if ($stmt = $conn->prepare($sql)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Settings | Bookverse</title>
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
-    <link rel="stylesheet" href="shop.css">
-    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="css/shop.css">
+    <link rel="stylesheet" href="css/settings.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -72,7 +74,7 @@ if ($stmt = $conn->prepare($sql)) {
     <nav>
         <div class="navbar">
             <div class="nav-left">
-                <h1><i class="fa-solid fa-book-open-cover"></i> Bookverse</h1>
+               <a href="index.php"><h1><i class="fa-solid fa-book-open-cover"></i> Bookverse</h1></a>
             </div>
             <div class="nav-right">
                 <div class="dropdown">
@@ -122,7 +124,8 @@ if ($stmt = $conn->prepare($sql)) {
                     </button>
                     <div class="dropdown-menu user-dropdown">
                         <a href="settings.php" class="active">Profile</a>
-                        <a href="shop.php?logout=true">Log Out</a>
+                        <a href="orders.php"><i class="fa-solid fa-box"></i> My Orders</a>
+                        <a href="index.php?logout=true">Log Out</a>
                     </div>
                 </div>
             </div>
@@ -159,7 +162,7 @@ if ($stmt = $conn->prepare($sql)) {
                 </div>
 
                 <div class="form-group">
-                    <label for="address">Shipping Address</label>
+                    <label for="address">Address</label>
                     <textarea id="address" name="address" 
                               placeholder="Enter your shipping address"
                               required><?php echo htmlspecialchars($user_details['address'] ?? ''); ?></textarea>
@@ -167,7 +170,7 @@ if ($stmt = $conn->prepare($sql)) {
 
                 <div class="form-actions">
                     <button type="submit" class="save-btn">Save Changes</button>
-                    <a href="shop.php" class="back-btn">Back to Shop</a>
+                    <a href="index.php" class="back-btn">Back to Shop</a>
                 </div>
             </form>
         </div>
@@ -175,27 +178,46 @@ if ($stmt = $conn->prepare($sql)) {
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Toggle dropdown menus
-        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-        dropdownToggles.forEach(toggle => {
-            toggle.addEventListener('click', function(e) {
+        // Dropdown functionality
+        const dropdowns = document.querySelectorAll('.dropdown');
+        let activeDropdown = null;
+        
+        dropdowns.forEach(dropdown => {
+            const button = dropdown.querySelector('.dropdown-toggle');
+            const menu = dropdown.querySelector('.dropdown-menu');
+            
+            button.addEventListener('click', function(e) {
                 e.stopPropagation();
-                const dropdownMenu = this.nextElementSibling;
-                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                
+                // If this dropdown is already active, close it
+                if (activeDropdown === dropdown) {
+                    menu.classList.remove('show');
+                    activeDropdown = null;
+                    return;
+                }
+                
+                // Close any other open dropdown
+                if (activeDropdown) {
+                    activeDropdown.querySelector('.dropdown-menu').classList.remove('show');
+                }
+                
+                // Open this dropdown
+                menu.classList.add('show');
+                activeDropdown = dropdown;
+            });
+            
+            // Prevent dropdown from closing when clicking inside the menu
+            menu.addEventListener('click', function(e) {
+                e.stopPropagation();
             });
         });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdowns = document.querySelectorAll('.dropdown');
-            dropdowns.forEach(dropdown => {
-                if (!dropdown.contains(event.target)) {
-                    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-                    if (dropdownMenu) {
-                        dropdownMenu.style.display = 'none';
-                    }
-                }
-            });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (activeDropdown && !activeDropdown.contains(e.target)) {
+                activeDropdown.querySelector('.dropdown-menu').classList.remove('show');
+                activeDropdown = null;
+            }
         });
     });
     </script>

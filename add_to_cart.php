@@ -1,15 +1,17 @@
 <?php
-session_start();
-include 'db.php';
+// Include session check
+require_once 'check_user_session.php';
 
-// Check if user is logged in
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("Location: userAuth.php");
-    exit();
-}
+include 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['book_id'])) {
     $book_id = $_POST['book_id'];
+    
+    // Check if user is logged in
+    if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+        echo json_encode(['success' => false, 'message' => 'login_required']);
+        exit();
+    }
     
     // Check if book exists and has stock
     $query = "SELECT stock_available FROM bookstore WHERE id = ?";
@@ -34,7 +36,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['book_id'])) {
             $_SESSION['cart'][$book_id] = 1;
         }
         
-        echo json_encode(['success' => true]);
+        // Calculate total cart quantity
+        $cartCount = array_sum($_SESSION['cart']);
+        
+        echo json_encode([
+            'success' => true,
+            'cartCount' => $cartCount,
+            'message' => 'Book added to cart successfully'
+        ]);
     } else {
         echo json_encode(['success' => false, 'message' => 'Book not found']);
     }

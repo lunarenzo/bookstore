@@ -18,7 +18,7 @@ class PaypalCheckout {
         $form .= '<input type="hidden" name="currency_code" value="' . $this->config['currency'] . '">';
         $form .= '<input type="hidden" name="return" value="' . $this->config['return_url'] . '">';
         $form .= '<input type="hidden" name="cancel_return" value="' . $this->config['cancel_url'] . '">';
-        $form .= '<input type="hidden" name="notify_url" value="' . $this->config['notify_url'] . '">';
+
 
         // Add cart items
         $i = 1;
@@ -29,9 +29,7 @@ class PaypalCheckout {
             $i++;
         }
 
-        $form .= '<button type="submit" class="paypal-button">Pay with PayPal</button>';
         $form .= '</form>';
-
         return $form;
     }
 

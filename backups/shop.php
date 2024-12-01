@@ -1,15 +1,14 @@
 <?php
+// Include session check
+require_once 'check_user_session.php';
+
 // Database connection
 include 'db.php';
 
-// Start session to check login state
-session_start();
-
 // Handle logout if requested
 if(isset($_GET['logout']) && $_GET['logout'] == 'true') {
-    $_SESSION = array();
     session_destroy();
-    header("Location: shop.php");
+    header("Location: userauth.php");
     exit();
 }
 
@@ -95,13 +94,16 @@ $result = $stmt->get_result();
                                 $stmt->execute();
                                 $cart_result = $stmt->get_result();
                                 if($book = $cart_result->fetch_assoc()) {
-                                    echo "<div class='cart-item'>";
+                                    echo "<div class='cart-item' data-id='" . $book['id'] . "'>";
                                     echo "<img src='uploads/" . htmlspecialchars($book['book_cover']) . "' alt='" . htmlspecialchars($book['title']) . "'>";
                                     echo "<div class='cart-item-details'>";
                                     echo "<h4>" . htmlspecialchars($book['title']) . "</h4>";
                                     echo "<p>Quantity: " . $quantity . "</p>";
                                     echo "<p class='cart-price'>$" . number_format($book['price'] * $quantity, 2) . "</p>";
                                     echo "</div>";
+                                    echo "<button class='remove-item' onclick='removeFromCart(" . $book['id'] . ")'>";
+                                    echo "<i class='fa-solid fa-times'></i>";
+                                    echo "</button>";
                                     echo "</div>";
                                 }
                             }
@@ -111,6 +113,9 @@ $result = $stmt->get_result();
                         ?>
                     </div>
                     <div class="cart-actions">
+                        <?php if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])): ?>
+                            <button class="btn btn-clear-cart" onclick="clearCart()">Clear Cart</button>
+                        <?php endif; ?>
                         <a href="cart.php" class="btn btn-view-cart">View Cart</a>
                     </div>
                 </div>
@@ -242,6 +247,72 @@ $result = $stmt->get_result();
             });
         });
     });
+
+    function removeFromCart(bookId) {
+        fetch('update_cart.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=remove&book_id=${bookId}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Simply remove the item from the dropdown
+                const cartItem = document.querySelector(`.cart-item[data-id="${bookId}"]`);
+                cartItem.remove();
+                updateCartDisplay(data);
+            } else {
+                alert(data.error || 'An error occurred while removing the item');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while removing the item');
+        });
+    }
+
+    function clearCart() {
+        if (!confirm('Are you sure you want to clear your cart?')) return;
+
+        fetch('update_cart.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=clear'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload the page to reflect the empty cart
+                location.reload();
+            } else {
+                alert(data.error || 'An error occurred while clearing the cart');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while clearing the cart');
+        });
+    }
+
+    function updateCartDisplay(data) {
+        // Update cart count
+        const cartCount = document.querySelector('.cart-count');
+        if (data.cartCount > 0) {
+            cartCount.textContent = data.cartCount;
+            cartCount.style.display = 'inline';
+        } else {
+            cartCount.style.display = 'none';
+            // Show empty cart message
+            const cartItems = document.querySelector('.cart-items');
+            cartItems.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+            // Hide clear cart button
+            document.querySelector('.btn-clear-cart').style.display = 'none';
+        }
+    }
     </script>
 </body>
 </html>

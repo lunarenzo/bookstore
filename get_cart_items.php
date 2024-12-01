@@ -2,6 +2,10 @@
 include 'db.php';
 session_start();
 
+header('Content-Type: application/json');
+$cart_items = array();
+$total = 0;
+
 if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
     foreach($_SESSION['cart'] as $book_id => $quantity) {
         $cart_query = "SELECT id, title, price, book_cover FROM bookstore WHERE id = ?";
@@ -10,17 +14,24 @@ if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
         $stmt->execute();
         $cart_result = $stmt->get_result();
         if($book = $cart_result->fetch_assoc()) {
-            echo "<div class='cart-item'>";
-            echo "<img src='uploads/" . htmlspecialchars($book['book_cover']) . "' alt='" . htmlspecialchars($book['title']) . "'>";
-            echo "<div class='cart-item-details'>";
-            echo "<h4>" . htmlspecialchars($book['title']) . "</h4>";
-            echo "<p>Quantity: " . $quantity . "</p>";
-            echo "<p class='cart-price'>$" . number_format($book['price'] * $quantity, 2) . "</p>";
-            echo "</div>";
-            echo "</div>";
+            $item = array(
+                'id' => $book['id'],
+                'title' => $book['title'],
+                'price' => $book['price'],
+                'book_cover' => $book['book_cover'],
+                'quantity' => $quantity,
+                'subtotal' => $book['price'] * $quantity
+            );
+            $cart_items[] = $item;
+            $total += $item['subtotal'];
         }
     }
-} else {
-    echo "<p class='empty-cart-message'>Your cart is empty</p>";
 }
+
+echo json_encode([
+    'success' => true,
+    'items' => $cart_items,
+    'total' => $total,
+    'empty' => empty($cart_items)
+]);
 ?>

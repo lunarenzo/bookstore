@@ -1,5 +1,7 @@
 <?php
-session_start();
+// Include session check
+require_once 'check_user_session.php';
+
 require_once 'db.php';
 require_once 'includes/PaypalCheckout.php';
 require_once 'includes/OrderManager.php';
@@ -8,6 +10,18 @@ require_once 'includes/OrderManager.php';
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("Location: userAuth.php");
     exit();
+}
+
+// Get user details
+$user_id = $_SESSION["id"];
+$user_details = [];
+$sql = "SELECT * FROM user_details WHERE user_id = ?";
+if ($stmt = $conn->prepare($sql)) {
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user_details = $result->fetch_assoc();
+    $stmt->close();
 }
 
 // Initialize PayPal checkout handler and Order Manager
@@ -34,17 +48,13 @@ if (!empty($_SESSION['cart'])) {
         $cart_items[] = $book;
         $total += $book['subtotal'];
     }
+}
 
-    // Create order in database
-    try {
-        $orderId = $orderManager->createOrder($_SESSION['id'], $cart_items, $total);
-        $_SESSION['current_order_id'] = $orderId;
-    } catch (Exception $e) {
-        die("Error creating order: " . $e->getMessage());
-    }
+// Generate a unique transaction ID if not exists
+if (!isset($_SESSION['transaction_id'])) {
+    $_SESSION['transaction_id'] = 'TXN' . time() . rand(1000, 9999);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,48 +62,15 @@ if (!empty($_SESSION['cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout | Bookverse</title>
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
-    <link rel="stylesheet" href="shop.css">
-    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="css\shop.css">
+    <link rel="stylesheet" href="css\cart.css">
+    <link rel="stylesheet" href="css\checkout.css">
 </head>
 <body>
     <nav>
         <div class="navbar">
             <div class="nav-left">
-                <h1><i class="fa-solid fa-book-open-cover"></i> Bookverse</h1>
-            </div>
-            <div class="nav-center">
-                <form action="shop.php" method="GET" class="search-form">
-                    <input type="text" name="search" class="search-bar" 
-                           placeholder="Search for books...">
-                    <button type="submit" class="search-button">
-                        <i class="fa-solid fa-search"></i>
-                    </button>
-                </form>
-            </div>
-            <div class="nav-right">
-                <div class="dropdown cart-dropdown">
-                    <button class="dropbtn">
-                        <i class="fa-solid fa-shopping-cart"></i>
-                        <span class="cart-count"><?php echo array_sum($_SESSION['cart'] ?? []); ?></span>
-                    </button>
-                </div>
-                <div class="dropdown user-dropdown">
-                    <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true): ?>
-                        <button class="dropbtn">
-                            <i class="fa-solid fa-user"></i>
-                            <span><?php echo isset($_SESSION['fullname']) ? htmlspecialchars($_SESSION['fullname']) : 'Account'; ?></span>
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="settings.php">Profile</a>
-                            <a href="shop.php?logout=true">Log Out</a>
-                        </div>
-                    <?php else: ?>
-                        <a href="userAuth.php" class="dropbtn">
-                            <i class="fa-solid fa-user"></i>
-                            <span>Sign In</span>
-                        </a>
-                    <?php endif; ?>
-                </div>
+                <h1><a href="index.php" style="text-decoration: none; color: #1a1a1a;"><i class="fa-solid fa-book-open-cover"></i> Bookverse</a></h1>
             </div>
         </div>
     </nav>
@@ -111,225 +88,90 @@ if (!empty($_SESSION['cart'])) {
                 <i class="fa-solid fa-shopping-cart empty-cart-icon"></i>
                 <p>Your cart is empty</p>
                 <p class="empty-cart-subtext">Add some books to your cart first.</p>
-                <a href="shop.php" class="btn-primary">Browse Books</a>
+                <a href="index.php" class="btn-primary">Browse Books</a>
             </div>
         <?php else: ?>
-            <div class="cart-content">
-                <div class="checkout-items">
-                    <div class="checkout-section">
-                        <h3>Order Summary</h3>
-                        <?php foreach ($cart_items as $item): ?>
-                            <div class="checkout-item">
-                                <div class="item-info">
-                                    <img src="uploads/<?php echo htmlspecialchars($item['book_cover']); ?>" 
-                                         alt="<?php echo htmlspecialchars($item['title']); ?>">
-                                    <div class="item-details">
-                                        <h4><?php echo htmlspecialchars($item['title']); ?></h4>
-                                        <p class="author">by <?php echo htmlspecialchars($item['author']); ?></p>
-                                        <p class="quantity">Quantity: <?php echo $item['quantity']; ?></p>
-                                        <p class="price">$<?php echo number_format($item['price'], 2); ?> each</p>
+            <div class="checkout-container">
+                <div class="user-info-section">
+                    <h3>Contact Information</h3>
+                    <div class="user-info-item">
+                        <label>Transaction ID:</label>
+                        <span class="transaction-id"><?php echo htmlspecialchars($_SESSION['transaction_id']); ?></span>
+                    </div>
+                    <div class="user-info-item">
+                        <label>Full Name:</label>
+                        <span><?php echo isset($user_details['full_name']) ? htmlspecialchars($user_details['full_name']) : 'Not set'; ?></span>
+                    </div>
+                    <div class="user-info-item">
+                        <label>Email:</label>
+                        <span><?php echo isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : 'Not set'; ?></span>
+                    </div>
+                    <div class="user-info-item">
+                        <label>Phone Number:</label>
+                        <span><?php echo isset($user_details['phone']) ? htmlspecialchars($user_details['phone']) : 'Not set'; ?></span>
+                    </div>
+                    <div class="user-info-item">
+                        <label>Address:</label>
+                        <span><?php echo isset($user_details['address']) ? htmlspecialchars($user_details['address']) : 'Not set'; ?></span>
+                    </div>
+                    <?php if (!$user_details): ?>
+                        <div class="warning-message">
+                            Please <a href="profile.php">update your profile</a> to complete your purchase.
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="checkout-content">
+                    <div class="order-summary">
+                        <div class="checkout-section">
+                            <h3>Order Summary</h3>
+                            <?php foreach ($cart_items as $item): ?>
+                                <div class="checkout-item">
+                                    <div class="item-info">
+                                        <img src="uploads/<?php echo htmlspecialchars($item['book_cover']); ?>" 
+                                             alt="<?php echo htmlspecialchars($item['title']); ?>">
+                                        <div class="item-details">
+                                            <h4><?php echo htmlspecialchars($item['title']); ?></h4>
+                                            <p class="author">by <?php echo htmlspecialchars($item['author']); ?></p>
+                                            <p class="quantity">Quantity: <?php echo $item['quantity']; ?></p>
+                                            <p class="price">$<?php echo number_format($item['price'], 2); ?> each</p>
+                                        </div>
+                                    </div>
+                                    <div class="item-subtotal">
+                                        <p>$<?php echo number_format($item['subtotal'], 2); ?></p>
                                     </div>
                                 </div>
-                                <div class="item-subtotal">
-                                    <p>$<?php echo number_format($item['subtotal'], 2); ?></p>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
-                
-                <div class="cart-summary">
-                    <div class="summary-content">
-                        <h3>Payment Summary</h3>
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span>$<?php echo number_format($total, 2); ?></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Shipping</span>
-                            <span>Free</span>
-                        </div>
-                        <div class="summary-total">
-                            <span>Total</span>
-                            <span>$<?php echo number_format($total, 2); ?></span>
-                        </div>
-                        <div class="payment-section">
-                            <?php echo $paypal->generatePaymentForm($cart_items, $total); ?>
+                    
+                    <div class="payment-summary">
+                        <div class="checkout-section">
+                            <h3>Payment Summary</h3>
+                            <div class="summary-content">
+                                <div class="summary-row">
+                                    <span>Subtotal</span>
+                                    <span>$<?php echo number_format($total, 2); ?></span>
+                                </div>
+                                <div class="summary-total">
+                                    <span>Total</span>
+                                    <span>$<?php echo number_format($total, 2); ?></span>
+                                </div>
+                                
+                                <?php if ($user_details): ?>
+                                    <form action="process_payment.php" method="post">
+                                        <input type="hidden" name="transaction_id" value="<?php echo $_SESSION['transaction_id']; ?>">
+                                        <button type="submit" class="checkout-button">Proceed to Payment</button>
+                                    </form>
+                                <?php else: ?>
+                                    <div class="warning-message">Please update your profile before proceeding to payment.</div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
     </div>
-
-    <style>
-    .checkout-section {
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        padding: 30px;
-    }
-
-    .checkout-section h3 {
-        font-size: 18px;
-        margin: 0 0 20px 0;
-        color: #1a1a1a;
-    }
-
-    .checkout-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 0;
-        border-bottom: 1px solid #eee;
-    }
-
-    .checkout-item:last-child {
-        border-bottom: none;
-        padding-bottom: 0;
-    }
-
-    .item-info {
-        display: flex;
-        gap: 20px;
-        flex: 1;
-    }
-
-    .item-info img {
-        width: 80px;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 8px;
-    }
-
-    .item-details h4 {
-        font-size: 16px;
-        margin: 0 0 8px 0;
-        color: #1a1a1a;
-    }
-
-    .item-details .author {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 8px;
-    }
-
-    .item-details .quantity {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 8px;
-    }
-
-    .item-details .price {
-        font-size: 14px;
-        color: #1a1a1a;
-        margin: 0;
-    }
-
-    .item-subtotal {
-        font-size: 16px;
-        font-weight: 500;
-        color: #1a1a1a;
-        min-width: 100px;
-        text-align: right;
-    }
-
-    .item-subtotal p {
-        margin: 0;
-    }
-
-    .cart-summary h3 {
-        font-size: 18px;
-        margin: 0 0 20px 0;
-        color: #1a1a1a;
-    }
-
-    .payment-section {
-        margin-top: 30px;
-    }
-
-    .btn-primary, .btn-secondary {
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-decoration: none;
-        display: inline-block;
-        border: 1px solid #000;
-    }
-
-    .btn-primary {
-        background-color: #000;
-        color: #fff;
-    }
-
-    .btn-primary:hover {
-        background-color: #333;
-        border-color: #333;
-    }
-
-    .btn-secondary {
-        background-color: #fff;
-        color: #000;
-    }
-
-    .btn-secondary:hover {
-        background-color: #f5f5f5;
-    }
-
-    .paypal-button {
-        width: 100%;
-        padding: 10px;
-        background-color: #000;
-        color: #fff;
-        border: 1px solid #000;
-        border-radius: 6px;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        margin-top: 20px;
-    }
-
-    .paypal-button:hover {
-        background-color: #333;
-        border-color: #333;
-    }
-
-    .continue-shopping {
-        color: #000;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 14px;
-        padding: 6px 12px;
-        border-radius: 6px;
-        transition: all 0.2s ease;
-    }
-
-    .continue-shopping:hover {
-        background-color: #f5f5f5;
-    }
-
-    @media (max-width: 600px) {
-        .checkout-item {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .item-info {
-            width: 100%;
-        }
-
-        .item-subtotal {
-            width: 100%;
-            text-align: left;
-        }
-    }
-    </style>
 </body>
 </html>

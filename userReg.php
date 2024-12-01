@@ -1,8 +1,7 @@
 <?php
-// Include the database connection file
-include('db.php');
+require_once 'db.php';
 
-// Initialize variables for form input and errors
+// Initialize variables
 $email = $password = $confirm_password = "";
 $email_err = $password_err = $confirm_password_err = "";
 
@@ -70,8 +69,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Close the connection
     $conn->close();
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,7 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up | Bookverse</title>
-    <link rel="stylesheet" href="userauthStyle.css">
+    <link rel="stylesheet" href="css/userauthStyle.css">
 </head>
 <body>
   <main>
@@ -101,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
         <button type="submit" class="login-btn">Register</button>
         <div class="links">
-          <a href="#">Forgot password?</a>
+          <a>or</a>
           <a href="userAuth.php">Sign In</a>
         </div>
       </form>

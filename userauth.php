@@ -45,14 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION["email"] = $email_db;
 
                         // Redirect to the user dashboard or another protected page
-                        header("location: shop.php");
+                        header("location: index.php");
                         exit;
                     } else {
-                        $password_err = "The password you entered was not correct.";
+                        $password_err = "Invalid email or password.";
                     }
                 }
             } else {
-                $email_err = "No account found with that email.";
+                $email_err = "Account does not exist.";
             }
 
             $stmt->close();
@@ -71,7 +71,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In | Bookverse</title>
-    <link rel="stylesheet" href="userauthStyle.css">
+    <link rel="stylesheet" href="css/userauthStyle.css">
+    <style>
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #ef9a9a;
+            font-size: 0.9rem;
+        }
+        
+        .error-message i {
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
   <main>
@@ -81,16 +96,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="title-section">
           <h1 class="site-title">Sign In</h1>
         </div>
-  
+
         <label for="email">Email</label>
         <input type="text" placeholder="Enter Email" name="email" required />
-  
+
         <label for="password">Password</label>
         <input type="password" placeholder="Enter Password" name="password" required />
-  
+
+        <?php if (!empty($email_err) || !empty($password_err)): ?>
+            <div class="error-message">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <?php 
+                    if (!empty($email_err)) {
+                        echo $email_err;
+                    } else {
+                        echo $password_err;
+                    }
+                ?>
+            </div>
+        <?php endif; ?>
+
         <button type="submit" class="login-btn">Sign In</button>
         <div class="links">
-          <a href="#">Forgot password?</a>
+          <a>or</a>
           <a href="userReg.php">Sign Up</a>
         </div>
       </form>

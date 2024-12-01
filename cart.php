@@ -1,5 +1,7 @@
 <?php
-session_start();
+// Include session check
+require_once 'check_user_session.php';
+
 include 'db.php';
 
 // Initialize cart if it doesn't exist
@@ -7,53 +9,48 @@ if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = array();
 }
 
-// Handle quantity updates
-if (isset($_POST['update_quantity'])) {
-    $book_id = $_POST['book_id'];
-    $new_quantity = (int)$_POST['quantity'];
+// Handle cart actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $book_id = isset($_POST['book_id']) ? (int)$_POST['book_id'] : 0;
     
-    // Get book stock from database
-    $stock_query = "SELECT stock_available FROM bookstore WHERE id = ?";
-    $stmt = $conn->prepare($stock_query);
-    $stmt->bind_param("i", $book_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $book = $result->fetch_assoc();
-    
-    // Ensure quantity doesn't exceed stock
-    if ($new_quantity > 0 && $new_quantity <= $book['stock_available']) {
-        $_SESSION['cart'][$book_id] = $new_quantity;
+    if (isset($_POST['update_quantity'])) {
+        $new_quantity = (int)$_POST['quantity'];
+        if ($new_quantity > 0) {
+            $stmt = $conn->prepare("SELECT stock_available FROM bookstore WHERE id = ?");
+            $stmt->bind_param("i", $book_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $book = $result->fetch_assoc();
+            
+            if ($new_quantity <= $book['stock_available']) {
+                $_SESSION['cart'][$book_id] = $new_quantity;
+            }
+        }
+    } elseif (isset($_POST['remove_item'])) {
+        unset($_SESSION['cart'][$book_id]);
     }
     
     header("Location: cart.php");
     exit();
 }
 
-// Handle item removal
-if (isset($_POST['remove_item'])) {
-    $book_id = $_POST['book_id'];
-    unset($_SESSION['cart'][$book_id]);
-    header("Location: cart.php");
-    exit();
-}
-
-// Get cart items from database
+// Get cart items efficiently with a single query
 $cart_items = array();
 $total = 0;
 
 if (!empty($_SESSION['cart'])) {
     $ids = array_keys($_SESSION['cart']);
-    $ids_str = implode(',', array_fill(0, count($ids), '?'));
-    
-    $query = "SELECT * FROM bookstore WHERE id IN ($ids_str)";
+    $placeholders = str_repeat('?,', count($ids) - 1) . '?';
+    $query = "SELECT * FROM bookstore WHERE id IN ($placeholders)";
     $stmt = $conn->prepare($query);
     $stmt->bind_param(str_repeat('i', count($ids)), ...$ids);
     $stmt->execute();
     $result = $stmt->get_result();
     
     while ($book = $result->fetch_assoc()) {
-        $book['quantity'] = $_SESSION['cart'][$book['id']];
-        $book['subtotal'] = $book['price'] * $book['quantity'];
+        $quantity = $_SESSION['cart'][$book['id']];
+        $book['quantity'] = $quantity;
+        $book['subtotal'] = $book['price'] * $quantity;
         $cart_items[] = $book;
         $total += $book['subtotal'];
     }
@@ -67,186 +64,195 @@ if (!empty($_SESSION['cart'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart | Bookverse</title>
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
-    <link rel="stylesheet" href="shop.css">
-    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="css\shop.css">
+    <link rel="stylesheet" href="css\cart.css">
 </head>
 <body>
     <nav>
         <div class="navbar">
             <div class="nav-left">
-                <h1><i class="fa-solid fa-book-open-cover"></i> Bookverse</h1>
-            </div>
-            <div class="nav-center">
-                <form action="shop.php" method="GET" class="search-form">
-                    <input type="text" name="search" class="search-bar" 
-                           placeholder="Search for books...">
-                    <button type="submit" class="search-button">
-                        <i class="fa-solid fa-search"></i>
-                    </button>
-                </form>
-            </div>
-            <div class="nav-right">
-                <div class="dropdown cart-dropdown">
-                    <button class="dropbtn">
-                        <i class="fa-solid fa-shopping-cart"></i>
-                        <span class="cart-count"><?php echo array_sum($_SESSION['cart'] ?? []); ?></span>
-                    </button>
-                </div>
-                <div class="dropdown user-dropdown">
-                    <?php if(isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true): ?>
-                        <button class="dropbtn">
-                            <i class="fa-solid fa-user"></i>
-                            <span><?php echo isset($_SESSION['fullname']) ? htmlspecialchars($_SESSION['fullname']) : 'Account'; ?></span>
-                        </button>
-                        <div class="dropdown-content">
-                            <a href="settings.php">Profile</a>
-                            <a href="shop.php?logout=true">Log Out</a>
-                        </div>
-                    <?php else: ?>
-                        <a href="userAuth.php" class="dropbtn">
-                            <i class="fa-solid fa-user"></i>
-                            <span>Sign In</span>
-                        </a>
-                    <?php endif; ?>
-                </div>
+                <h1><a href="index.php" class="nav-logo"><i class="fa-solid fa-book-open-cover"></i> Bookverse</a></h1>
             </div>
         </div>
     </nav>
 
     <div class="cart-container">
-        <div class="cart-header">
-            <h2>Your Shopping Cart</h2>
-            <a href="shop.php" class="continue-shopping">
-                <i class="fa-solid fa-arrow-left"></i> Continue Shopping
-            </a>
-        </div>
-        
-        <?php if (empty($cart_items)): ?>
-            <div class="empty-cart">
-                <i class="fa-solid fa-shopping-cart empty-cart-icon"></i>
-                <p>Your cart is empty</p>
-                <p class="empty-cart-subtext">Looks like you haven't added any books to your cart yet.</p>
-                <a href="shop.php" class="btn-primary">Browse Books</a>
+        <?php if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])): ?>
+            <div class="cart-items">
+                <?php
+                $total = 0;
+                foreach($_SESSION['cart'] as $book_id => $quantity) {
+                    $stmt = $conn->prepare("SELECT * FROM bookstore WHERE id = ?");
+                    $stmt->bind_param("i", $book_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    if($book = $result->fetch_assoc()):
+                        $subtotal = $book['price'] * $quantity;
+                        $total += $subtotal;
+                ?>
+                    <div class="cart-item" data-id="<?php echo $book['id']; ?>">
+                        <div class="item-image">
+                            <img src="uploads/<?php echo htmlspecialchars($book['book_cover']); ?>" 
+                                 alt="<?php echo htmlspecialchars($book['title']); ?>">
+                        </div>
+                        <div class="item-details">
+                            <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                            <p class="author">by <?php echo htmlspecialchars($book['author']); ?></p>
+                            <p class="price">$<?php echo number_format($book['price'], 2); ?></p>
+                        </div>
+                        <div class="item-quantity">
+                            <button class="quantity-btn minus" onclick="updateQuantity(<?php echo $book['id']; ?>, -1)">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <input type="number" name="quantity" value="<?php echo $quantity; ?>" 
+                                   min="1" max="<?php echo $book['stock_available']; ?>" 
+                                   onchange="updateQuantity(<?php echo $book['id']; ?>, this.value)">
+                            <button class="quantity-btn plus" onclick="updateQuantity(<?php echo $book['id']; ?>, 1)">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <div class="item-subtotal">
+                            <p class="subtotal">$<?php echo number_format($subtotal, 2); ?></p>
+                            <button class="remove-btn" onclick="removeFromCart(<?php echo $book['id']; ?>)">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                <?php 
+                    endif;
+                }
+                ?>
+            </div>
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>$<?php echo number_format($total, 2); ?></span>
+                </div>
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>$<?php echo number_format($total, 2); ?></span>
+                </div>
+                <div class="cart-actions">
+                    <a href="index.php" class="btn-secondary">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Continue Shopping
+                    </a>
+                    <a href="checkout.php" class="btn-primary">
+                        Proceed to Checkout
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         <?php else: ?>
-            <div class="cart-content">
-                <div class="cart-items">
-                    <?php foreach ($cart_items as $item): ?>
-                        <div class="cart-item" data-id="<?php echo $item['id']; ?>">
-                            <div class="item-image">
-                                <img src="uploads/<?php echo htmlspecialchars($item['book_cover']); ?>" 
-                                     alt="<?php echo htmlspecialchars($item['title']); ?>">
-                            </div>
-                            <div class="item-details">
-                                <div class="item-info">
-                                    <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                    <p class="author">by <?php echo htmlspecialchars($item['author']); ?></p>
-                                    <p class="price">$<?php echo number_format($item['price'], 2); ?></p>
-                                </div>
-                                <div class="item-actions">
-                                    <div class="quantity-controls">
-                                        <button class="quantity-btn minus" onclick="updateQuantity(<?php echo $item['id']; ?>, -1)">
-                                            <i class="fa-solid fa-minus"></i>
-                                        </button>
-                                        <input type="number" name="quantity" value="<?php echo $item['quantity']; ?>" 
-                                               min="1" max="<?php echo $item['stock_available']; ?>"
-                                               onchange="updateQuantity(<?php echo $item['id']; ?>, this.value)">
-                                        <button class="quantity-btn plus" onclick="updateQuantity(<?php echo $item['id']; ?>, 1)">
-                                            <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <button class="btn-remove" onclick="removeItem(<?php echo $item['id']; ?>)">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                                <p class="subtotal">Subtotal: $<?php echo number_format($item['subtotal'], 2); ?></p>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-                
-                <div class="cart-summary">
-                    <div class="summary-content">
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span>$<?php echo number_format($total, 2); ?></span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Shipping</span>
-                            <span>Free</span>
-                        </div>
-                        <div class="summary-total">
-                            <span>Total</span>
-                            <span>$<?php echo number_format($total, 2); ?></span>
-                        </div>
-                        <a href="checkout.php" class="btn-checkout">
-                            Proceed to Checkout <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
+            <div class="empty-cart">
+                <i class="fa-light fa-cart-shopping"></i>
+                <h2>Your cart is empty</h2>
+                <p>Looks like you haven't added anything to your cart yet.</p>
+                <a href="index.php" class="continue-shopping">Continue Shopping</a>
             </div>
         <?php endif; ?>
     </div>
 
     <script>
-    function updateQuantity(bookId, change) {
-        const input = document.querySelector(`.cart-item[data-id="${bookId}"] input[name="quantity"]`);
-        let newQuantity;
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartItems = document.querySelectorAll('.cart-item');
         
-        if (typeof change === 'number') {
-            newQuantity = parseInt(input.value) + change;
-        } else {
-            newQuantity = parseInt(change);
-        }
+        cartItems.forEach(item => {
+            const removeBtn = item.querySelector('.remove-btn');
+            const quantityBtns = item.querySelectorAll('.quantity-btn');
+            const quantityInput = item.querySelector('input[name="quantity"]');
+            
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to remove this item?')) {
+                        removeFromCart(item.dataset.id);
+                    }
+                });
+            }
+            
+            if (quantityInput) {
+                quantityInput.addEventListener('change', () => {
+                    updateQuantity(item.dataset.id, parseInt(quantityInput.value));
+                });
+            }
+            
+            quantityBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const change = btn.classList.contains('minus') ? -1 : 1;
+                    updateQuantity(item.dataset.id, parseInt(quantityInput.value) + change);
+                });
+            });
+        });
+    });
 
-        if (newQuantity < 1 || newQuantity > parseInt(input.max)) return;
-
+    function updateQuantity(bookId, newQuantity) {
+        const cartItem = document.querySelector(`.cart-item[data-id="${bookId}"]`);
+        const input = cartItem.querySelector('input[name="quantity"]');
+        const maxStock = parseInt(input.getAttribute('max'));
+        
+        newQuantity = Math.max(1, Math.min(newQuantity, maxStock));
+        cartItem.classList.add('updating');
+        
         fetch('update_cart.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `book_id=${bookId}&quantity=${newQuantity}`
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=update&book_id=${bookId}&quantity=${newQuantity}`
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 input.value = newQuantity;
-                updateCartDisplay(data);
+                cartItem.querySelector('.subtotal').textContent = `$${data.formattedItemSubtotal}`;
+                updateCartSummary(data.formattedTotal);
+            } else {
+                throw new Error(data.error || 'Failed to update cart');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while updating the cart');
+        })
+        .finally(() => {
+            cartItem.classList.remove('updating');
         });
     }
 
-    function removeItem(bookId) {
+    function removeFromCart(bookId) {
+        const cartItem = document.querySelector(`.cart-item[data-id="${bookId}"]`);
+        cartItem.classList.add('removing');
+        
         fetch('update_cart.php', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `book_id=${bookId}&remove=1`
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=remove&book_id=${bookId}`
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const item = document.querySelector(`.cart-item[data-id="${bookId}"]`);
-                item.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => {
-                    item.remove();
-                    updateCartDisplay(data);
+                cartItem.addEventListener('transitionend', () => {
+                    cartItem.remove();
                     if (document.querySelectorAll('.cart-item').length === 0) {
                         location.reload();
                     }
-                }, 300);
+                });
+                cartItem.style.height = '0';
+                cartItem.style.opacity = '0';
+                updateCartSummary(data.formattedTotal);
+            } else {
+                throw new Error(data.error || 'Failed to remove item');
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(error.message || 'An error occurred while removing the item');
+            cartItem.classList.remove('removing');
         });
     }
 
-    function updateCartDisplay(data) {
-        document.querySelector('.cart-count').textContent = data.cartCount;
-        const summaryTotal = document.querySelector('.summary-total span:last-child');
-        if (summaryTotal) {
-            summaryTotal.textContent = `$${data.total.toFixed(2)}`;
-        }
+    function updateCartSummary(formattedTotal) {
+        document.querySelectorAll('.summary-row span:last-child, .summary-total span:last-child')
+            .forEach(el => el.textContent = `$${formattedTotal}`);
     }
     </script>
 </body>

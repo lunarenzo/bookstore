@@ -138,6 +138,91 @@ form {
     background-color: #eee;
 }
 
+/* Dropdown Menus */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    color: #1a1a1a;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+}
+
+.dropdown-toggle:hover {
+    background-color: #f5f5f5;
+}
+
+.dropdown-toggle i {
+    font-size: 18px;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 12px 16px;
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f5f5;
+}
+
+.dropdown-menu a.active {
+    background-color: #f5f5f5;
+    font-weight: 500;
+}
+
+/* Cart Dropdown Specific Styles */
+.cart-dropdown {
+    padding: 16px;
+    min-width: 300px;
+}
+
+.cart-items {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        min-width: 280px;
+        right: -10px;
+    }
+}
+
 /* Active state for navigation */
 .user-dropdown a.active {
     background-color: #f5f5f5;

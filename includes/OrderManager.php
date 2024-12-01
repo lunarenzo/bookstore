@@ -11,29 +11,19 @@ class OrderManager {
             $this->conn->begin_transaction();
 
             // Create the order
-            $query = "INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, 'pending')";
+            $query = "INSERT INTO orders (user_id, total_amount, status, created_at) VALUES (?, ?, 'pending', NOW())";
             $stmt = $this->conn->prepare($query);
             $stmt->bind_param("id", $userId, $total);
             $stmt->execute();
             $orderId = $this->conn->insert_id;
 
-            // Add order items and update stock
+            // Add order items
+            $query = "INSERT INTO order_items (order_id, book_id, quantity, price_per_unit) VALUES (?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+
             foreach ($cartItems as $item) {
-                // Insert order item
-                $query = "INSERT INTO order_items (order_id, book_id, quantity, price_per_unit) VALUES (?, ?, ?, ?)";
-                $stmt = $this->conn->prepare($query);
                 $stmt->bind_param("iiid", $orderId, $item['id'], $item['quantity'], $item['price']);
                 $stmt->execute();
-
-                // Update stock
-                $query = "UPDATE bookstore SET stock_available = stock_available - ? WHERE id = ? AND stock_available >= ?";
-                $stmt = $this->conn->prepare($query);
-                $stmt->bind_param("iii", $item['quantity'], $item['id'], $item['quantity']);
-                $result = $stmt->execute();
-
-                if ($stmt->affected_rows === 0) {
-                    throw new Exception("Insufficient stock for book ID: " . $item['id']);
-                }
             }
 
             $this->conn->commit();
@@ -44,22 +34,30 @@ class OrderManager {
         }
     }
 
-    public function updateOrderStatus($orderId, $status, $transactionId = null) {
-        $query = "UPDATE orders SET status = ?, transaction_id = ? WHERE id = ?";
+    public function updateOrderStatus($orderId, $status) {
+        $query = "UPDATE orders SET status = ? WHERE id = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ssi", $status, $transactionId, $orderId);
+        $stmt->bind_param("si", $status, $orderId);
         return $stmt->execute();
     }
 
-    public function getOrderDetails($orderId) {
-        $query = "SELECT o.*, oi.*, b.title, b.author 
-                 FROM orders o 
-                 JOIN order_items oi ON o.id = oi.order_id 
-                 JOIN bookstore b ON oi.book_id = b.id 
-                 WHERE o.id = ?";
+    public function getOrder($orderId) {
+        $query = "SELECT * FROM orders WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $orderId);
         $stmt->execute();
-        return $stmt->get_result();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getOrderItems($orderId) {
+        $query = "SELECT oi.*, b.title, b.author, b.book_cover 
+                 FROM order_items oi 
+                 JOIN bookstore b ON oi.book_id = b.id 
+                 WHERE oi.order_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $orderId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }
+?>
