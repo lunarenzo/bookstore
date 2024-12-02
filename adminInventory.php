@@ -42,7 +42,6 @@ if (isset($_POST['add_book'])) {
         // Handle file upload
         if (isset($_FILES['book_cover']) && $_FILES['book_cover']['error'] == 0) {
             $book_cover = $_FILES['book_cover'];
-
             // Check file type and size (optional)
             $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
             $file_extension = pathinfo($book_cover['name'], PATHINFO_EXTENSION);
@@ -59,7 +58,7 @@ if (isset($_POST['add_book'])) {
 
                     $stmt = mysqli_prepare($conn, $sql);
                     // Bind parameters: 'ssdssss' corresponds to title, author, price, date_published, genre, file_name, isbn
-                    mysqli_stmt_bind_param($stmt, 'ssdssssi', $title, $author, $price, $date_published, $genre, $file_name, $isbn, $stock_available);
+                    mysqli_stmt_bind_param($stmt, 'ssdsssssi', $title, $author, $price, $date_published, $genre, $file_name, $isbn, $stock_available);
 
                     if (mysqli_stmt_execute($stmt)) {
                         $success_message = 'New book added successfully!';
@@ -88,6 +87,7 @@ if (isset($_POST['edit_book'])) {
     $isbn = $_POST['isbn'];
     $genre = $_POST['genre'];
     $stock_available = $_POST['stock_available'];
+    
 
     // Check if a new book cover is uploaded
     $update_cover = false;
@@ -147,11 +147,24 @@ if (isset($_POST['edit_book'])) {
     }
 }
 
+// Pagination settings
+$entries_per_page = 7;
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($current_page - 1) * $entries_per_page;
 
+// Get total number of books
+$total_query = "SELECT COUNT(*) as total FROM bookstore";
+$total_result = mysqli_query($conn, $total_query);
+$total_row = mysqli_fetch_assoc($total_result);
+$total_books = $total_row['total'];
+$total_pages = ceil($total_books / $entries_per_page);
 
-// Fetch all books from the database
-$sql = "SELECT * FROM bookstore";
-$result = mysqli_query($conn, $sql);
+// Fetch books for current page
+$sql = "SELECT * FROM bookstore LIMIT ? OFFSET ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "ii", $entries_per_page, $offset);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 // Check for 'deleted' query parameter
 if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
@@ -162,8 +175,8 @@ if (isset($_GET['deleted']) && $_GET['deleted'] == 'true') {
 if (isset($_GET['error'])) {
     $error_message = $_GET['error'];
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
@@ -270,14 +283,30 @@ if (isset($_GET['error'])) {
                         <td><?php echo $book['stock_available']; ?></td>
                         <td><?php echo $book['date_published']; ?></td>
                         <td>
-                        <button class="btn btn-edit" onclick="openEditModal(<?php echo $book['id']; ?>)">Edit</button>
+                            <button class="btn btn-edit" onclick="openEditModal(<?php echo $book['id']; ?>)">Edit</button>
                             <a href="delete_book.php?id=<?php echo $book['id']; ?>" class="btn btn-delete">Delete</a>
                         </td>
                     </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
+<br>
+        <!-- Pagination -->
+        <div class="pagination">
+            <?php if ($current_page > 1): ?>
+                <a href="?page=<?php echo ($current_page - 1); ?>" class="page-link">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            <?php endif; ?>
 
+            <span class="page-info">Page <?php echo $current_page; ?> of <?php echo $total_pages; ?></span>
+
+            <?php if ($current_page < $total_pages): ?>
+                <a href="?page=<?php echo ($current_page + 1); ?>" class="page-link">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            <?php endif; ?>
+        </div>
 
 <!-- Add New Book Modal -->
 <div id="addBookModal" class="modal">
@@ -446,7 +475,6 @@ if (isset($conn) && $conn) {
     mysqli_close($conn);
 }
 ?>
-
 </body>
 <script src="js/fileup.js"></script>
 <script src="js/main.js"></script>
